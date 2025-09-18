@@ -1,0 +1,30 @@
+# Python
+backend/venv/
+backend/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+backend/instance/
+
+# Node
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment
+*.env
+*.env.local
+*.env.development.local
+*.env.test.local
+*.env.production.local
+
+# System / IDE
+.vscode/
+.idea/
+*.log
+.DS_Store
