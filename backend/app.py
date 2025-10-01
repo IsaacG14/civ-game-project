@@ -5,6 +5,11 @@ import mysql.connector
 app = Flask(__name__)
 CORS(app)
 
+sample_games = [
+    {"id": 1, "type": "Tic-Tac-Toe", "name": "i want tic tac", "players": ["Alice", "Bob"], "data": "[0,4,1,2,6]"},
+    {"id": 2, "type": "Tic-Tac-Toe", "name": "naughts and crosses (oi mate)", "players": ["Charlie", "Bob"], "data": "[4,7,6,1,2]", "winner": "Charlie"},
+]
+
 # Database connection config
 db_config = {
     "host": "127.0.0.1",
