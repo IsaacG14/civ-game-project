@@ -29,7 +29,7 @@ function updateRef<T>(ref: React.ForwardedRef<T>, newRefValue: T) {
  * A component that wraps {@link Phaser.Game}.
  * Manages creating and destroying the game instance.
  *
- * @param onSceneReady - Optional callback function that is called when the Phaser scene is ready.
+ * @param onSceneReady - Optional callback function that is called when a Phaser scene is ready.
  *   Receives the scene instance as its argument.
  */
 export const PhaserGame = forwardRef<IRefPhaserGame, IProps>(({ onSceneReady: onSceneReady }, ref) =>
