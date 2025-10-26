@@ -3,8 +3,24 @@ import { IRefPhaserGame, PhaserGame } from './PhaserGame';
 import { MainMenu } from './game/scenes/MainMenu';
 import ExampleComponent from './ExampleComponent';
 
-function App()
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LoginPage from "./pages/LoginPage.jsx";
+import CreateAccount from "./pages/CreateAccount.jsx";
+import Hub from "./pages/Hub.jsx";
+
+export default function App()
 {
+    return (
+        <Router>
+            <Routes>
+                <Route path = "/" element = {<LoginPage />} />
+                <Route path = "/createAccount" element = {<CreateAccount />} />
+                <Route path = "/hub" element = {<Hub />} />
+            </Routes>
+        </Router>
+  );
+    /*
     // The sprite can only be moved in the MainMenu Scene
     const [canMoveSprite, setCanMoveSprite] = useState(true);
 
@@ -101,6 +117,5 @@ function App()
             </div>
         </div>
     )
+    */
 }
-
-export default App
