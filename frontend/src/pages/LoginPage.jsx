@@ -11,21 +11,32 @@ export default function LoginPage() {
     e.preventDefault();
     console.log("Login attempt:", username, password);
     // Call backend here to check if login is correct
-    if (username == localStorage.getItem("username") && password == localStorage.getItem("password"))
-    {
-       navigate("/hub");
+
+
+    fetch("http://localhost:5000/get_user", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: username, password: password })
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success === true) {
+      navigate("/hub");
+    } else {
+      setError(data.message);
     }
-    else 
-    {
-      setError("Username or Password not found.")
-    }
-    
+    })
+    .catch(err => console.error("Error:", err));
   };
+
   const handleCreateAccount = () => {
     navigate("/createAccount");
   }
 
+
+
   return (
+    
     <div style = {{
       display: "flex",
       justifyContent: "center", 
