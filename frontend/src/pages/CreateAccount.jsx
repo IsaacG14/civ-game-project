@@ -11,6 +11,8 @@ export default function CreationPage() {
   const handleSignup = (e) => {
     e.preventDefault();
     console.log("Signup attempt:", username, email, password, confirmPassword);
+    localStorage.setItem("username", username);
+    localStorage.setItem("password", password); 
     //call backend here to add account
     navigate("/");
   };
