@@ -4,13 +4,22 @@ import { useNavigate } from "react-router-dom"
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("")
   const navigate = useNavigate();
 
   const handleLogin = (e) => {
     e.preventDefault();
     console.log("Login attempt:", username, password);
     // Call backend here to check if login is correct
-    navigate("/hub");
+    if (username == localStorage.getItem("username") && password == localStorage.getItem("password"))
+    {
+       navigate("/hub");
+    }
+    else 
+    {
+      setError("Username or Password not found.")
+    }
+    
   };
   const handleCreateAccount = () => {
     navigate("/createAccount");
@@ -61,6 +70,8 @@ export default function LoginPage() {
                 borderRadius: "8px",
                 border: "1px solid #ccc",
               }}/>
+            {error && <p style={{ color: "red" }}>{error}</p>}
+
               <button type = "submit"
               style = {{backgroundColor: "#007bff",
               color: "white",
