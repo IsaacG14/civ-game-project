@@ -15,9 +15,9 @@ export default function App()
         <div>
             <Router>
                 <Routes>
-                    <Route path="/" element={<Navigate to="/loginpage" />} />
+                    <Route path="/" element={<Navigate to="/hub" />} />
 
-                    <Route path = "/loginPage" element = {<LoginPage />} />
+                    <Route path = "/login" element = {<LoginPage />} />
                     <Route path = "/createAccount" element = {<CreateAccount />} />
                     <Route path = "/hub" element = {<Hub />} />
                 </Routes>
