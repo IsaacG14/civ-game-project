@@ -7,12 +7,12 @@ export class Game extends Scene
     background: Phaser.GameObjects.Image;
     gameText: Phaser.GameObjects.Text;
 
-    constructor ()
+    constructor()
     {
         super('Game');
     }
 
-    create ()
+    create()
     {
         this.camera = this.cameras.main;
         this.camera.setBackgroundColor(0x00ff00);
@@ -29,7 +29,7 @@ export class Game extends Scene
         EventBus.emit('current-scene-ready', this);
     }
 
-    changeScene ()
+    changeScene()
     {
         this.scene.start('GameOver');
     }
