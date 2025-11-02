@@ -6,6 +6,7 @@ npm install react react-dom react-router-dom
 
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import Navbar from "../components/Navbar"
 
 export default function Hub() {
   const navigate = useNavigate();
@@ -56,6 +57,12 @@ export default function Hub() {
     localStorage.removeItem("token");
     navigate("/login");
   }
+  function accountInfo() {
+    navigate("/account");
+  }
+  function leaderboard() {
+    navigate("/leaderboard");
+  }
 
   // Display on loading.
   if (loading) {
@@ -75,21 +82,104 @@ export default function Hub() {
   }
 
   return (
-    <div
-      style={{
-        width: "100vw",
-        height: "100vh",
-        backgroundColor: "#000000",
+    <div>
+      <Navbar onAccountClick = {accountInfo}
+      onLeaderboardClick = {leaderboard}
+      onLogoutClick = {logout}
+      />
+      <div style = {{
         display: "flex",
         justifyContent: "center",
-        alignItems: "center",
-        color: "#ffffff",
-        flexDirection: "column",
+        alignItems: "flex-start",
+        gap: "50px",
+        marginTop: "150px",
       }}
-    >
-      <h1>Hub</h1>
-      <p>{hubData ? hubData.message : "No data"}</p>
-      <button onClick={logout}>Logout</button>
+      >
+        <div style = {{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+        >
+          <div style = {{
+            width: "250px",
+            height: "500px",
+            border: "2px solid #ffffff",
+            borderRadius: "10px",
+            padding: "40px",
+            marginLeft: "60px",
+            textAlign: "center",
+            //Adds a scrolling for games
+            overflowY: "auto",
+          }}
+          >
+            <h2>Current Games</h2>
+            <p>Game 1</p>
+            <p>Game 2</p>
+            <p>Game 3</p>
+            <p>Game 4</p>
+            <p>Game 5</p>
+            <p>Game 6</p>
+            <p>Game 7</p>
+            <p>Game 8</p>
+            <p>Game 9</p>
+            <p>Game 10</p>
+            <p>Game 11</p>
+            <p>Game 12</p>
+            <p>Game 13</p>
+            <p>Game 14</p>
+            <p>Game 15</p>
+            <p>Game 16</p>
+          </div>
+          <button style = {{
+            width: "300px",
+            backgroundColor: "#e06c00ff",
+            color: "#ffffff",
+            padding: "10px 30px",
+            border: "2px solid #ffffff",
+            borderRadius: "1px",
+            cursor: "pointer",
+            marginLeft: "60px",
+          }}
+          >
+            Create Game
+          </button>
+        </div>
+
+      <div style = {{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <div style = {{
+          width: "250px",
+          height: "500px",
+          border: "2px solid #ffffff",
+          borderRadius: "10px",
+          padding: "40px",
+          marginRight: "60px",
+          textAlign: "center",
+          overflowY: "auto",
+        }}
+        >
+          <h2>Joinable Games</h2>
+        </div>
+      <button style = {{
+        width: "300px",
+        backgroundColor: "#e06c00ff",
+        color: "#ffffff",
+        padding: "10px 30px",
+        border: "2px solid #ffffff",
+        borderRadius: "1px",
+        cursor: "pointer",
+        marginRight: "60px",
+      }}
+      >
+        Join Private Game
+      </button>
+      </div>
     </div>
+  </div>
   );
 }
