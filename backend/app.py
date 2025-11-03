@@ -27,6 +27,7 @@ from functools import wraps
 import jwt
 import datetime
 import os
+import mysql.connector
 
 # Define key for token encryption
 SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "gameApp")
@@ -120,6 +121,12 @@ def find_user(username):
 # Handles login attempts.
 @app.route("/log_in", methods=["POST"])
 def log_in():
+    conn = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="0505",  # replace with your root password
+        database="user_database"
+    )
     # Store data sent by user containing username and password.
     data = request.get_json() 
     print("Received:", data)
@@ -127,19 +134,28 @@ def log_in():
     # Seperate username and password into variables
     username = data.get("username")
     password = data.get("password")
+    dbpassword = None
 
     # Find user using username. If user is not found return error.
-    user = find_user(username)
-    if not user:
-        return jsonify({"message": "User not found"}), 401
+    try:
+        cursor = conn.cursor()
+        # Use parameterized query to avoid SQL injection
+        cursor.execute("SELECT id, password FROM users WHERE username = %s", (username,))
+        row = cursor.fetchone()
+        if row:
+            id = row[0]
+            dbpassword = row[1]  # password
+    finally:
+        cursor.close()
+        conn.close()
    
 
     # Check if attempted password is users password.
-    if password == user["password"]:
+    if password == dbpassword:
         # Create a JWT token valid for 1 hour.
         token = jwt.encode(
             {
-                "user_id": user["id"],
+                "user_id": id,
                 "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=1)
             },
             SECRET_KEY,
