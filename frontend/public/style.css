@@ -17,34 +17,34 @@ body {
 }
 
 button {
-    background-color: "#28a745";
-    color: "white";
-    padding: "10px";
-    border: "none";
-    border-radius: "8px";
-    cursor: "pointer";
-    font-weight: "bold";
+    background-color: #28a745;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
 }
 
 .submitButton {
-    background-color: "#007bff";
+    background-color: #007bff;
 }
 
 .createAccountButton {
-    margin-top: "15px";
+    margin-top: 15px;
 }
 
 .textInput {
-    padding: "10px";
-    border-radius: "8px";
-    border: "1px solid #ccc";
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
 }
 
 .loginContainer {
-    background-color: "white";
-    padding: "40px";
-    border-radius: "12px";
-    box-shadow: "0 4px 10px rgba(0, 0, 0, 0.1)";
-    width: "300px";
-    text-align: "center";
+    background-color: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    text-align: center;
 }
