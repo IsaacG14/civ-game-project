@@ -28,6 +28,7 @@ import jwt
 import datetime
 import os
 import mysql.connector
+import bcrypt
 
 # Define key for token encryption
 SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "gameApp")
@@ -140,13 +141,15 @@ def log_in():
         if row:
             id = row[0]
             dbpassword = row[1]  # password
+        else:
+            return jsonify({"message": "User not found."}), 401
     finally:
         cursor.close()
         conn.close()
    
 
     # Check if attempted password is users password.
-    if password == dbpassword:
+    if bcrypt.checkpw(password.encode('utf-8'), dbpassword.encode('utf-8')):
         # Create a JWT token valid for 1 hour.
         token = jwt.encode(
             {
@@ -178,6 +181,8 @@ def sign_up():
     # Seperate username and password into variables
     username = data.get("username")
     password = data.get("password")
+    password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    password = password.decode('utf-8')
 
     try:
         cursor = conn.cursor()
@@ -188,10 +193,10 @@ def sign_up():
         )
         conn.commit()
         # Return the auto-incremented id
-        return "User Successfully Created!"
+        return jsonify({"message": "User successfully created!"})
     except mysql.connector.Error as err:
         print("Error:", err)
-        return None
+        return jsonify({"success": False, "message": "Username already taken"}), 400
     finally:
         cursor.close()
         conn.close()

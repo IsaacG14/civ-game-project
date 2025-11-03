@@ -6,6 +6,7 @@ export default function CreationPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("")
+  const [error, setError] = useState("")
   const navigate = useNavigate();
 
   const handleSignup = (e) => {
@@ -16,24 +17,9 @@ export default function CreationPage() {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username: username, password: password})
   })
-    // Make response into a json file.
-    .then(res => res.json())
-    // If credentials are valid, token is sent, otherwise not token is sent.
-    // If token exists store it locally and navigate to hub.
-    // If token does not exist show login error and remove tokens just in case.
-    .then(data => {
-      if (data.token){
-        localStorage.setItem("token", data.token)
-        navigate("/hub")
-      } 
-      else {
-        setError("Username or password not found.")
-        localStorage.removeItem("token");
-      }
-    })
-    // Display error.
+    .then(res => !res.ok ? setError("Username Already Taken!") : navigate("/"))
     .catch(err => console.error("Error:", err));
-    navigate("/");
+    
   };
 
   return (
@@ -101,6 +87,9 @@ export default function CreationPage() {
                 borderRadius: "8px",
                 border: "1px solid #ccc",
               }}/>
+
+              {error && <p style={{ color: "red" }}>{error}</p>}
+
               <button type = "submit"
               style = {{backgroundColor: "#007bff",
               color: "white",
