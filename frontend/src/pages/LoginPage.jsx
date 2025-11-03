@@ -1,9 +1,3 @@
-/*
-Required installs:
-
-npm install react react-dom react-router-dom
-*/
-
 import React, { useState, useEffect} from "react";
 import { useNavigate } from "react-router-dom"
 
@@ -75,38 +69,33 @@ export default function LoginPage() {
 
 
   return (
-    
-    <div style = {{
-      display: "flex",
-      justifyContent: "center", 
-      alignItems: "center", 
-      height: "100vh", 
-      backgroundColor: "#AAFF00"}}>
-        
-        <div className="loginContainer">
+    <div className="fullScreen">
+      <div className="formContainer">
 
-            <h1 style={{marginBottom: "20px", color: "#000"}}>Login</h1>
+        <h1 className="formHeader">Login</h1>
 
-            <form onSubmit={handleLogin} style={{display: "flex", flexDirection: "column", gap: "15px"}}>
-              
-              <input type="text" className="textInput" placeholder="Username" value={username}
-                required onChange={(e) => setUsername(e.target.value)}/>
+        <form id="loginForm" onSubmit={handleLogin}>
 
-              <input type="password" className="textInput" placeholder="Password" value={password}
-                required onChange={(e) => setPassword(e.target.value)}/>
-              
-              {error && <p style={{ color: "red" }}>{error}</p>}
+          <label htmlFor="username" style={{color: "#000"}}>Username</label>
+          <input id="username" type="text" className="textInput" placeholder="Username" value={username}
+            required onChange={(e) => setUsername(e.target.value)}/>
 
-              <button type="submit" className="submitButton">Login</button>
-            </form>
+          <label htmlFor="password" style={{color: "#000"}}>Password</label>
+          <input id="password" type="password" className="textInput" placeholder="Password" value={password}
+            required onChange={(e) => setPassword(e.target.value)}/>
+          
+          {error && <p style={{ color: "red" }}>{error}</p>}
 
-            <button 
-                type="button" 
-                onClick={handleCreateAccount} 
-                className="createAccountButton">
-              Create a New Account
-            </button>
-        </div>
+          <button type="submit" className="formSubmitButton">Login</button>
+        </form>
+
+        <button 
+            type="button" className="formExtraButton"
+            onClick={handleCreateAccount}>
+          Create a New Account
+        </button>
+
+      </div>
     </div>
   );
 }
