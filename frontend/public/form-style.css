@@ -25,16 +25,16 @@
     background-color: var(--secondary);
 }
 
-.formTextEntry {
+.formTextInput {
     display: flex;
     flex-direction: column;
 }
-.formTextEntry > label {
+.formTextInput > label {
     font-size: 0.875em;
     color: #555555;
     width: fit-content;
 }
-.formTextEntry > input {
+.formTextInput > input {
     font-size: 0.875em;
     padding: 10px;
     border-radius: 8px;
