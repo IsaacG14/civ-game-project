@@ -1,4 +1,5 @@
 -- mysql -u root -p < init.sql
+-- Run in mysql workbench
 
 CREATE DATABASE user_database;
 USE user_database;
@@ -9,6 +10,6 @@ CREATE TABLE users (
 );
 
 INSERT INTO users (username, password)
-VALUES ('testuser', 'password123');
+VALUES ('chasemep', '05050505');
 
-SHOW DATABASES;
+-- SHOW DATABASES;

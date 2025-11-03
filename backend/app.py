@@ -38,11 +38,6 @@ SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "gameApp")
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:8080"])
 
-# Sample user data.
-users = [
-    {"id" : 1,"username" : "chasemep", "password" : "0505"}
-]
-
 # Sample game data.
 sample_games = [
     {"id": 1, "type": "Tic-Tac-Toe", "name": "i want tic tac", "players": ["Alice", "Bob"], "data": "[0,4,1,2,6]"},
@@ -165,6 +160,42 @@ def log_in():
     
     # If password is incorrect, return error.
     return jsonify({"message": "Invalid credentials"}), 401
+
+@app.route("/sign_up", methods = ["POST"])
+def sign_up():
+    # Connect to mysql database
+    conn = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="0505",  # replace with your root password
+        database="user_database"
+    )
+
+    # Store data sent by user containing username and password.
+    data = request.get_json() 
+    print("Received:", data)
+
+    # Seperate username and password into variables
+    username = data.get("username")
+    password = data.get("password")
+
+    try:
+        cursor = conn.cursor()
+        # Parameterized query prevents SQL injection
+        cursor.execute(
+            "INSERT INTO users (username, password) VALUES (%s, %s)",
+            (username, password)
+        )
+        conn.commit()
+        # Return the auto-incremented id
+        return "User Successfully Created!"
+    except mysql.connector.Error as err:
+        print("Error:", err)
+        return None
+    finally:
+        cursor.close()
+        conn.close()
+
 
 # Run app.
 if __name__ == "__main__":

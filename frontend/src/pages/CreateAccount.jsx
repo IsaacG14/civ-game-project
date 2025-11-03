@@ -10,10 +10,29 @@ export default function CreationPage() {
 
   const handleSignup = (e) => {
     e.preventDefault();
-    console.log("Signup attempt:", username, email, password, confirmPassword);
-    localStorage.setItem("username", username);
-    localStorage.setItem("password", password); 
-    //call backend here to add account
+    
+    fetch("http://localhost:5000/sign_up", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: username, password: password})
+  })
+    // Make response into a json file.
+    .then(res => res.json())
+    // If credentials are valid, token is sent, otherwise not token is sent.
+    // If token exists store it locally and navigate to hub.
+    // If token does not exist show login error and remove tokens just in case.
+    .then(data => {
+      if (data.token){
+        localStorage.setItem("token", data.token)
+        navigate("/hub")
+      } 
+      else {
+        setError("Username or password not found.")
+        localStorage.removeItem("token");
+      }
+    })
+    // Display error.
+    .catch(err => console.error("Error:", err));
     navigate("/");
   };
 
