@@ -1,7 +1,45 @@
+* {
+    --primary: #963512;
+    --secondary: #f7ba13;
+}
+
+.cuprum-600 {
+  font-family: "Cuprum", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600; /* any weight available */
+  font-style: normal;
+}
+
+.russo {
+  font-family: "Russo One", sans-serif;
+  font-weight: 400; /* only weight 400 is available */
+  font-style: normal;
+}
+
 body {
     margin: 0;
     padding: 0;
     color: rgba(255, 255, 255, 0.87);
     background-color: #000000; 
     font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+}
+
+a {
+    cursor: pointer;
+    color: #2870db;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+button {
+    font-size: 0.875em;
+    background-color: var(--secondary);
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
 }

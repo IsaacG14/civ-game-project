@@ -31,8 +31,8 @@ export default function LoginPage() {
 
   // On login button click send credentials to backend. On succesful login a token will be stored in local storage to allow users to go to hub.
   const handleLogin = (e) => {
-    // Prevents page reloading on button click
-    e.preventDefault();
+    // Prevents page reloading on button click [only if the button type is "submit"]
+    // e.preventDefault();
 
     console.log("Login attempt:", username, password);
     
@@ -70,32 +70,27 @@ export default function LoginPage() {
 
   return (
     <div className="fullScreen">
-      <div className="formContainer">
+      <form className="formContainer"> {/* this is a form instead of a div just so the password field doesn't complain */}
+        <h1 className="russo">LOG IN</h1>
 
-        <h1 className="formHeader">Login</h1>
+        <div className="formTextEntry">
+          <label htmlFor="username" className="cuprum-600">Username</label>
+          <input id="username" type="text" value={username} className="cuprum-600"
+            onChange={(e) => setUsername(e.target.value)} required/>
+        </div>
 
-        <form id="loginForm" onSubmit={handleLogin}>
+        <div className="formTextEntry">
+          <label htmlFor="password" className="cuprum-600">Password</label>
+          <input id="password" type="password" value={password} className="cuprum-600"
+            onChange={(e) => setPassword(e.target.value)} required/>
+        </div>
+        
+        {error && <p className="cuprum-600" style={{ color: "red" }}>{error}</p>}
 
-          <label htmlFor="username" style={{color: "#000"}}>Username</label>
-          <input id="username" type="text" className="textInput" placeholder="Username" value={username}
-            required onChange={(e) => setUsername(e.target.value)}/>
-
-          <label htmlFor="password" style={{color: "#000"}}>Password</label>
-          <input id="password" type="password" className="textInput" placeholder="Password" value={password}
-            required onChange={(e) => setPassword(e.target.value)}/>
-          
-          {error && <p style={{ color: "red" }}>{error}</p>}
-
-          <button type="submit" className="formSubmitButton">Login</button>
-        </form>
-
-        <button 
-            type="button" className="formExtraButton"
-            onClick={handleCreateAccount}>
-          Create a New Account
-        </button>
-
-      </div>
+        <button type="button" className="formSubmitButton cuprum-600" onClick={handleLogin}>Log In</button>
+        
+        <span className="cuprum-600">Don't have an account? <a onClick={handleCreateAccount}>Create one here</a></span>
+      </form>
     </div>
   );
 }
