@@ -68,6 +68,16 @@ def get_players():
         return jsonify({"error": str(e)}), 500
 '''
 
+def get_db_connection():
+    # Mysql information (change to match your database)
+    return mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="0505", 
+        database="user_database"
+    )
+
+
 # Checks for validity of token.
 @app.route("/api/hub")
 def hub_data():
@@ -117,12 +127,7 @@ def find_user(username):
 # Handles login attempts.
 @app.route("/log_in", methods=["POST"])
 def log_in():
-    conn = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="0505",  # replace with your root password
-        database="user_database"
-    )
+    conn = get_db_connection()
     # Store data sent by user containing username and password.
     data = request.get_json() 
     print("Received:", data)
@@ -166,14 +171,7 @@ def log_in():
 
 @app.route("/sign_up", methods = ["POST"])
 def sign_up():
-    # Connect to mysql database
-    conn = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="0505",  # replace with your root password
-        database="user_database"
-    )
-
+    conn = get_db_connection()
     # Store data sent by user containing username and password.
     data = request.get_json() 
     print("Received:", data)
