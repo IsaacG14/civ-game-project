@@ -77,8 +77,8 @@ def get_db_connection():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="0505", 
-        database="user_database"
+        password="DataPassword1", 
+        database="dbgame"
     )
 
 
@@ -145,7 +145,7 @@ def log_in():
     try:
         cursor = conn.cursor()
         # Use parameterized query to avoid SQL injection
-        cursor.execute("SELECT id, password FROM users WHERE username = %s", (username,))
+        cursor.execute("SELECT user_id, password_hash FROM users WHERE username = %s", (username,))        
         row = cursor.fetchone()
         if row:
             id = row[0]
@@ -194,8 +194,8 @@ def sign_up():
         cursor = conn.cursor()
         # Parameterized query prevents SQL injection
         cursor.execute(
-            "INSERT INTO users (username, password) VALUES (%s, %s)",
-            (username, password)
+            "INSERT INTO users (username, email, password_hash) VALUES (%s, %s, %s)",
+            (username, email, password)
         )
         conn.commit()
         # Return the auto-incremented id
