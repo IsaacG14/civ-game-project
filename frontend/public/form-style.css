@@ -40,3 +40,21 @@
     border-radius: 8px;
     border: 1px solid #ccc;
 }
+
+/* Hub Forms */
+.hubButton {
+    width: 250px;
+    background-color: var(--secondary);
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 20px;
+    transition: background-color 0.2s; 
+}
+
+.hubButton:hover {
+    background-color: var(--submit-color);
+}
