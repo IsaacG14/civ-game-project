@@ -17,8 +17,9 @@ export default function CreationPage() {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username: username, password: password})
   })
-    .then(res => !res.ok ? setError("Username Already Taken!") : navigate("/"))
-    .catch(err => console.error("Error:", err));
+    .then(res => res.json().then(data => {
+      !res.ok ? setError(data.error) : navigate("/")
+  }))
     
   };
 

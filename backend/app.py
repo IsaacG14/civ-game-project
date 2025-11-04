@@ -32,6 +32,10 @@ import bcrypt
 
 # Define key for token encryption
 SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "gameApp")
+MAX_USERNAME_LENGTH = 20
+MIN_USERNAME_LENGTH = 5
+MAX_PASSWORD_LENGTH = 255
+MIN_PASSWORD_LENGTH = 8
 
 #import mysql.connector
 
@@ -178,7 +182,11 @@ def sign_up():
 
     # Seperate username and password into variables
     username = data.get("username")
+    if (len(username) > MAX_USERNAME_LENGTH or len(username) < MIN_USERNAME_LENGTH):
+        return jsonify({"success": False, "error": f"Username length must be {MIN_USERNAME_LENGTH}-{MAX_USERNAME_LENGTH}"}), 400
     password = data.get("password")
+    if (len(password) > MAX_PASSWORD_LENGTH or len(password) < MIN_PASSWORD_LENGTH):
+        return jsonify({"success": False, "error": f"Password length must be {MIN_PASSWORD_LENGTH}-{MAX_PASSWORD_LENGTH}"}), 400
     password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     password = password.decode('utf-8')
 
@@ -194,7 +202,7 @@ def sign_up():
         return jsonify({"message": "User successfully created!"})
     except mysql.connector.Error as err:
         print("Error:", err)
-        return jsonify({"success": False, "message": "Username already taken"}), 400
+        return jsonify({"success": False, "error": "Username already taken"}), 400
     finally:
         cursor.close()
         conn.close()
