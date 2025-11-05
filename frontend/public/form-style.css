@@ -56,6 +56,20 @@ button {
     border: 1px solid #ccc;
 }
 
+label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: black;
+    text-align: left;
+}
+/* Create Account */
+#accountForm {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
 /* Hub Forms */
 .hubButton {
     width: 250px;

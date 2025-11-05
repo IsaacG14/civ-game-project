@@ -76,11 +76,11 @@ export default function LoginPage() {
 
         <form id="loginForm" onSubmit={handleLogin}>
 
-          <label htmlFor="username" style={{color: "#000"}}>Username</label>
+          <label htmlFor="username">Username</label>
           <input id="username" type="text" className="textInput" placeholder="Username" value={username}
             required onChange={(e) => setUsername(e.target.value)}/>
 
-          <label htmlFor="password" style={{color: "#000"}}>Password</label>
+          <label htmlFor="password">Password</label>
           <input id="password" type="password" className="textInput" placeholder="Password" value={password}
             required onChange={(e) => setPassword(e.target.value)}/>
           
