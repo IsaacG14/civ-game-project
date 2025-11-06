@@ -41,6 +41,12 @@
     border: 1px solid #ccc;
 }
 
+label {
+    display: block;
+    color: black;
+    text-align: left;
+}
+
 /* Hub Forms */
 .hubButton {
     width: 250px;
