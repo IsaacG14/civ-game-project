@@ -69,3 +69,36 @@ button {
     overflow-y: auto;
     text-align: center;
 }
+/*All Leaderboard Styles*/
+.leaderboardColumn {
+    display: flex;
+    flex-direction: column;
+    width: 700px;
+    background-color: var(--primary);
+    border-radius: 8px;
+}
+.leaderboardRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 5px 10px;
+    gap: 40px;
+    margin-bottom: 5px;
+    background-color: var(--secondary);
+    border-radius: 5px;
+}
+.place {
+    width: 40px;
+    font-weight: bold;
+    font-size: 32px;
+}
+.username {
+    flex: 1;
+    text-align: left;
+    font-size: 32px;
+}
+.wins, .losses {
+    width: 50px;
+    text-align: center;
+    font-size: 32px;
+}

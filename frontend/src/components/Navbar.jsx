@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Navbar({onAccountClick, onLeaderboardClick, onLogoutClick}) {
+export default function Navbar({onAccountClick, onSpecialClick, specialClick, onLogoutClick}) {
     return (
         <header style = {{
             position: "fixed",
@@ -41,9 +41,9 @@ export default function Navbar({onAccountClick, onLeaderboardClick, onLogoutClic
             fontWeight: "bold",
             cursor: "pointer",
         }}
-        onClick = {onLeaderboardClick}
+        onClick = {onSpecialClick}
         >
-            Leaderboard
+            {specialClick}
         </button>
         <button style = {{
             background: "none",

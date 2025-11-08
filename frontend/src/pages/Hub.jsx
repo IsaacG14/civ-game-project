@@ -85,7 +85,8 @@ export default function Hub() {
     <div className ="fullScreen" style = {{ backgroundColor: "#000000ff", flexDirection: "column"}}>
       <Navbar 
         onAccountClick = {accountInfo}
-        onLeaderboardClick = {leaderboard}
+        onSpecialClick = {leaderboard}
+        specialClick ="Leaderboard"
         onLogoutClick = {logout}
       />
       <div className = "hubContent">
