@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Navbar from "../components/Navbar"
-import TextInput from "../components/TextInput";
 
 /*Remove after backend implemented*/
 const dummyData = [["Admin", 100, 0], ["Starfallen", 10, 20], ["Noob", 0, 100], ["xXGamerXx", 30, 12]];
@@ -23,9 +22,10 @@ export default function Leaderboard() {
   return (
     <div className = "fullScreen">
       <Navbar 
-              onAccountClick = {accountInfo}
-              onSpecialClick = {hub}
-              specialClick = "Hub"
+              onClickButton = {accountInfo}
+              clickButtonText = "Account"
+              onClickButton2 = {hub}
+              clickButton2Text = "Hub"
               onLogoutClick = {logout}
             />
       <div className = "leaderboardColumn">

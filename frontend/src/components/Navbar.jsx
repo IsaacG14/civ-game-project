@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Navbar({onAccountClick, onSpecialClick, specialClick, onLogoutClick}) {
+export default function Navbar({onClickButton, clickButtonText, onClickButton2, clickButton2Text, onLogoutClick}) {
     return (
         <header style = {{
             position: "fixed",
@@ -27,9 +27,9 @@ export default function Navbar({onAccountClick, onSpecialClick, specialClick, on
             fontWeight: "bold",
             cursor: "pointer",
         }}
-        onClick = {onAccountClick}
+        onClick = {onClickButton}
         >
-            Account
+            {clickButtonText}
         </button>
         <button style = {{
             background: "none",
@@ -41,9 +41,9 @@ export default function Navbar({onAccountClick, onSpecialClick, specialClick, on
             fontWeight: "bold",
             cursor: "pointer",
         }}
-        onClick = {onSpecialClick}
+        onClick = {onClickButton2}
         >
-            {specialClick}
+            {clickButton2Text}
         </button>
         <button style = {{
             background: "none",
