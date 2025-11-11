@@ -13,11 +13,20 @@ export default function CreateAccountPage() {
 
   const handleSignup = (e) => {
     e.preventDefault();
-    console.log("Signup attempt:", username, email, password, confirmPassword);
-    localStorage.setItem("username", username);
-    localStorage.setItem("password", password); 
-    //call backend here to add account
-    navigate("/");
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match!");
+      return; 
+    }
+    
+    fetch("http://localhost:5000/sign_up", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: username,email: email, password: password})
+    })
+      .then(res => res.json().then(data => {
+        !res.ok ? setError(data.error) : navigate("/")
+    }))
   };
 
   const backToLogin = (e) => {
