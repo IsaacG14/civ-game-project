@@ -1,6 +1,7 @@
 -- Select your database first
 USE dbgame;
 
+-- -----------------------------------------------------------
 -- 1. Populate Users
 -- We add three users: 'alice', 'bob', and 'charlie'.
 -- The rest of the script will assume they get auto-incremented
@@ -14,20 +15,15 @@ INSERT INTO Users (username, email, password_hash) VALUES
 -- Bob is user_id 2
 -- Charlie is user_id 3
 
-SELECT * FROM Users;
-
--- -----------------------------------------------------
+-- -----------------------------------------------------------
 -- 2. Populate GameType (Lookup Table)
--- -----------------------------------------------------
 INSERT INTO GameType (typeName, maxPlayers, minPlayers) VALUES
 ('TicTacToe', 2, 2),
 ('Checkers', 2, 2),
 ('Uno', 4, 2);
 
-SELECT * FROM GameType;
--- -----------------------------------------------------
+-- -----------------------------------------------------------
 -- 3. Scenario 1: A Finished Tic-Tac-Toe Game (Game 1)
--- -----------------------------------------------------
 
 -- First, create the main entry in the `Game` table.
 INSERT INTO Game (gameID, typeName, name, creationDate, startDate, status)
@@ -44,11 +40,8 @@ VALUES
 (1, 1, 0, 100, 1), -- Alice (Winner)
 (2, 1, 0, 0, 2);   -- Bob (Loser)
 
-SELECT * FROM Plays;
-
--- -----------------------------------------------------
+-- -----------------------------------------------------------
 -- 4. Scenario 2: An Ongoing Checkers Game (Game 2)
--- -----------------------------------------------------
 
 -- Create the main `Game` entry.
 INSERT INTO Game (gameID, typeName, name, creationDate, startDate, status)
@@ -64,11 +57,8 @@ VALUES
 (3, 2), -- Charlie
 (2, 2); -- Bob
 
-SELECT * FROM Game;
-
--- -----------------------------------------------------
+-- -----------------------------------------------------------
 -- 5. Scenario 3: An Unstarted Public Uno Game (Game 3)
--- -----------------------------------------------------
 
 -- Create the main `Game` entry.
 INSERT INTO Game (gameID, typeName, name, creationDate, status)
@@ -82,10 +72,8 @@ VALUES (3, 'UNO123', 1); -- 1 = true
 INSERT INTO Plays (userID, gameID)
 VALUES (1, 3);
 
-SELECT * FROM Game;
--- -----------------------------------------------------
+-- -----------------------------------------------------------
 -- 6. Scenario 4: An Unstarted Private TTT Game (Game 4)
--- -----------------------------------------------------
 
 -- Create the main `Game` entry.
 INSERT INTO Game (gameID, typeName, name, creationDate, status)
@@ -99,9 +87,8 @@ VALUES (4, 'SECRET', 0); -- 0 = false
 INSERT INTO Plays (userID, gameID)
 VALUES (3, 4);
 
--- -----------------------------------------------------
+-- -----------------------------------------------------------
 -- 7. Populate HasStatsFor (Leaderboard Stats)
--- -----------------------------------------------------
 -- Based on the finished game (Scenario 1), we give Alice 1 win
 -- and Bob 1 loss for TicTacToe. We'll add some other random stats.
 INSERT INTO HasStatsFor (userID, typeName, wins, losses)
@@ -111,5 +98,3 @@ VALUES
 (2, 'TicTacToe', 0, 1), -- Bob's loss from Game 1
 (2, 'Checkers', 10, 3),   -- Bob is a good Checkers player
 (3, 'Checkers', 8, 8);   -- Charlie is average at Checkers
-
-SELECT * FROM HasStatsFor;
