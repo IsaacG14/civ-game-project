@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS `Users` (
   `email` VARCHAR(100) NOT NULL,
   `password_hash` VARCHAR(255) NOT NULL,
   `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  `privileges` INT NOT NULL DEFAULT 0,
   
   PRIMARY KEY (`user_id`),
   UNIQUE INDEX `username_UNIQUE` (`username` ASC),
