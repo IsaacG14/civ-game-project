@@ -1,23 +1,5 @@
 """
-Required Python packages for this project:
-
-# Core backend framework
-pip install Flask
-
-# JWT authentication
-pip install PyJWT
-
-# Cross-Origin Resource Sharing (allow React frontend to call Flask backend)
-pip install Flask-CORS
-
-# Optional: MySQL database support (if using database later)
-pip install mysql-connector-python
-
-# Optional: Load environment variables from a .env file (for secrets like JWT_SECRET_KEY)
-pip install python-dotenv
-
-# Minimal working backend install command (everything you need for current setup):
-pip install Flask PyJWT Flask-CORS
+To install all the required python packages, use `uv sync`
 """
 
 
@@ -26,18 +8,15 @@ from flask_cors import CORS
 from functools import wraps
 import jwt
 import datetime
-import os
 import mysql.connector
 import bcrypt
+import dotenv
 
-# Define key for token encryption
-SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "gameApp")
+
 MAX_USERNAME_LENGTH = 20
 MIN_USERNAME_LENGTH = 5
 MAX_PASSWORD_LENGTH = 255
 MIN_PASSWORD_LENGTH = 8
-
-#import mysql.connector
 
 # initilizes Flask application.
 app = Flask(__name__)
@@ -50,12 +29,17 @@ sample_games = [
 ]
 
 # Database connection config
+env = dotenv.dotenv_values("personal.env")
+
 db_config = {
-    "host": "127.0.0.1",
-    "user": "civ_user",       # the user you created
-    "password": "civ_pass123",# the password you set
-    "database": "civ_game"
+    "host": env["DB_HOST"], 
+    "user": env["DB_USER"], 
+    "password": env["DB_PASS"], 
+    "database": env["DB_NAME"]
 }
+
+SECRET_KEY = env["JWT_SECRET_KEY"]
+
 
 '''
 @app.route("/players")
