@@ -1,0 +1,66 @@
+.fullScreen {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    height: 100vh; 
+    background-color: var(--primary);
+    text-align: center;
+}
+
+.formContainer {
+    background-color: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+
+    color: black;
+
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+}
+
+.formSubmitButton {
+    background-color: var(--secondary);
+}
+
+.formTextInput {
+    display: flex;
+    flex-direction: column;
+}
+.formTextInput > label {
+    font-size: 0.875em;
+    color: #555555;
+    width: fit-content;
+}
+.formTextInput > input {
+    font-size: 0.875em;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+label {
+    display: block;
+    color: black;
+    text-align: left;
+}
+
+/* Hub Forms */
+.hubButton {
+    width: 250px;
+    background-color: var(--secondary);
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 20px;
+    transition: background-color 0.2s; 
+}
+
+.hubButton:hover {
+    background-color: var(--submit-color);
+}

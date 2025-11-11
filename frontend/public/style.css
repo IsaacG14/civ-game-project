@@ -1,23 +1,41 @@
+* {
+    --primary: #963512;
+    --secondary: #f7ba13;
+}
+
+.cuprum-600 {
+  font-family: "Cuprum", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600; /* any weight available */
+  font-style: normal;
+}
+
+.russo {
+  font-family: "Russo One", sans-serif;
+  font-weight: 400; /* only weight 400 is available */
+  font-style: normal;
+}
+
 body {
     margin: 0;
     padding: 0;
     color: rgba(255, 255, 255, 0.87);
     background-color: #000000; 
     font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
 }
 
-.exampleComponent {
-    margin: 10px 0 0 10px;
-    padding: 10px;
-    border: 1px solid #0ec3c9;
-    background-color: rgba(14, 195, 201, 0.1);
-    color: #0ec3c9;
-    font-size: 1em;
-    text-align: center;
+a {
+    cursor: pointer;
+    color: #2870db;
+}
+a:hover {
+    text-decoration: underline;
 }
 
 button {
-    background-color: #28a745;
+    font-size: 0.875em;
+    background-color: var(--secondary);
     color: white;
     padding: 10px;
     border: none;
@@ -25,26 +43,124 @@ button {
     cursor: pointer;
     font-weight: bold;
 }
-
-.submitButton {
-    background-color: #007bff;
+/* All Hub Styles */
+.hubContent {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 60px;
+    margin-top: 120px;
+    flex-wrap: wrap;
 }
 
-.createAccountButton {
-    margin-top: 15px;
+.hubColumn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.textInput {
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-}
-
-.loginContainer {
-    background-color: white;
-    padding: 40px;
+.hubBox {
+    background-color: rgb(199, 96, 1);
+    width: 280px;
+    height: 500px;
+    padding: 30px;
     border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    width: 300px;
+    box-shadow: 0 4px 10px rgba(245, 158, 100, 0.4);
+    overflow-y: auto;
     text-align: center;
+}
+/*All Leaderboard Styles*/
+.leaderboardColumn {
+    display: flex;
+    flex-direction: column;
+    width: 700px;
+    background-color: var(--primary);
+    border-radius: 8px;
+}
+.leaderboardRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 5px 10px;
+    gap: 40px;
+    margin-bottom: 5px;
+    background-color: var(--secondary);
+    border-radius: 5px;
+}
+.place {
+    width: 40px;
+    font-weight: bold;
+    font-size: 32px;
+}
+.username {
+    flex: 1;
+    text-align: left;
+    font-size: 32px;
+}
+.wins, .losses {
+    width: 50px;
+    text-align: center;
+    font-size: 32px;
+}
+/*All Account Info Styles*/
+.accountColumn {
+    display: flex;
+    flex-direction: column;
+    width: 500px;
+    background-color: var(--secondary);
+    border-radius: 10px;
+}
+.userID {
+    flex: 1;
+    font-weight: bold;
+    color: black;
+    text-align: left;
+    margin-top: 30px;
+    margin-left: 40px;
+}
+.accountStat {
+    flex: 2;
+    font-weight: normal;
+    color: black;
+    text-align: left;
+    margin-left: 40px;
+}
+.changeEmail {
+    font-size: 0.875em;
+    background-color: rgb(0, 26, 255);
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.changePassword{
+    font-size: 0.875em;
+    background-color: rgb(162, 0, 255);
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.deleteButton{
+    font-size: 0.875em;
+    background-color: rgb(255, 0, 0);
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.buttonRow {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin-top: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
+    padding: 10px;
 }
