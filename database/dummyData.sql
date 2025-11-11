@@ -10,7 +10,9 @@ USE dbgame;
 INSERT INTO Users (username, email, password_hash) VALUES
 ('alice', 'alice@example.com', '$2b$12$D.Uu9x/eA5GCls2N1.O2L.X1Qc/5PQgJ5fXgqN.wG/N.zI8f7gXyK'),
 ('bob', 'bob@example.com', '$2b$12$hP4.G2oUu0KkE5.d8P/J..Gv1Qf.uVl.O0/v.G0k3j.s5.s0k3m3Jk'),
-('charlie', 'charlie@example.com', '$2b$12$wE.S.qK/E.a/z.y1x8E.O.uVw.g5s1K/e.B.e2y6s8.s0v1p3');
+('charlie', 'charlie@example.com', '$2b$12$wE.S.qK/E.a/z.y1x8E.O.uVw.g5s1K/e.B.e2y6s8.s0v1p3'),
+('admin', 'admin@example.com', '$2b$12$GyFSyCG/rykuPFb/gerz0.TeRZZbnJjW7/dlMIiPOBls8Qu0vWRf.'),
+('david', 'david@example.com', '$2b$12$fytI8DrTHmphE/M0Bl/T5.NjOeHng3WTVyHqWjDr9S02X1mGb56Ca');
 -- Alice is user_id 1
 -- Bob is user_id 2
 -- Charlie is user_id 3
