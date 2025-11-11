@@ -82,104 +82,46 @@ export default function Hub() {
   }
 
   return (
-    <div>
-      <Navbar onAccountClick = {accountInfo}
-      onLeaderboardClick = {leaderboard}
-      onLogoutClick = {logout}
+    <div className ="fullScreen" style = {{ backgroundColor: "#000000ff", flexDirection: "column"}}>
+      <Navbar 
+        onClickButton = {accountInfo}
+        clickButtonText= "Account"
+        onClickButton2 = {leaderboard}
+        clickButton2Text ="Leaderboard"
+        onLogoutClick = {logout}
       />
-      <div style = {{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "flex-start",
-        gap: "50px",
-        marginTop: "150px",
-      }}
-      >
-        <div style = {{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-        >
-          <div style = {{
-            width: "250px",
-            height: "500px",
-            border: "2px solid #ffffff",
-            borderRadius: "10px",
-            padding: "40px",
-            marginLeft: "60px",
-            textAlign: "center",
-            //Adds a scrolling for games
-            overflowY: "auto",
-          }}
-          >
-            <h2>Current Games</h2>
-            <p>Game 1</p>
-            <p>Game 2</p>
-            <p>Game 3</p>
-            <p>Game 4</p>
-            <p>Game 5</p>
-            <p>Game 6</p>
-            <p>Game 7</p>
-            <p>Game 8</p>
-            <p>Game 9</p>
-            <p>Game 10</p>
-            <p>Game 11</p>
-            <p>Game 12</p>
-            <p>Game 13</p>
-            <p>Game 14</p>
-            <p>Game 15</p>
-            <p>Game 16</p>
+      <div className = "hubContent">
+        <div className = "hubColumn">
+          <div className = "hubBox">
+            <h2 className = "formHeader">Current Games</h2>
+              <p>Game 1</p>
+              <p>Game 2</p>
+              <p>Game 3</p>
+              <p>Game 4</p>
+              <p>Game 5</p>
+              <p>Game 6</p>
+              <p>Game 7</p>
+              <p>Game 8</p>
+              <p>Game 9</p>
+              <p>Game 10</p>
+              <p>Game 11</p>
+              <p>Game 12</p>
+              <p>Game 13</p>
+              <p>Game 14</p>
+              <p>Game 15</p>
+              <p>Game 16</p>
           </div>
-          <button style = {{
-            width: "300px",
-            backgroundColor: "#e06c00ff",
-            color: "#ffffff",
-            padding: "10px 30px",
-            border: "2px solid #ffffff",
-            borderRadius: "1px",
-            cursor: "pointer",
-            marginLeft: "60px",
-          }}
-          >
-            Create Game
-          </button>
+          <button className = "hubButton">Create Game</button>
         </div>
 
-      <div style = {{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <div style = {{
-          width: "250px",
-          height: "500px",
-          border: "2px solid #ffffff",
-          borderRadius: "10px",
-          padding: "40px",
-          marginRight: "60px",
-          textAlign: "center",
-          overflowY: "auto",
-        }}
-        >
-          <h2>Joinable Games</h2>
+        <div className = "hubColumn">
+          <div className = "hubBox">
+            <h2 className = "formHeader">Joinable Games</h2>
+              <p>Nothing</p>
+          </div>
+          <button className = "hubButton">Join Private Game</button>
         </div>
-      <button style = {{
-        width: "300px",
-        backgroundColor: "#e06c00ff",
-        color: "#ffffff",
-        padding: "10px 30px",
-        border: "2px solid #ffffff",
-        borderRadius: "1px",
-        cursor: "pointer",
-        marginRight: "60px",
-      }}
-      >
-        Join Private Game
-      </button>
-      </div>
+      </div> 
     </div>
-  </div>
   );
 }
