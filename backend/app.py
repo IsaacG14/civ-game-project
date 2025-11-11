@@ -59,10 +59,7 @@ def get_players():
 def get_db_connection():
     # Mysql information (change to match your database)
     return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="DataPassword1", 
-        database="dbgame"
+        **db_config
     )
 
 
