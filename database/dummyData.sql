@@ -20,7 +20,10 @@ INSERT INTO Users (username, email, password_hash) VALUES
 INSERT INTO GameType (typeName, maxPlayers, minPlayers) VALUES
 ('TicTacToe', 2, 2),
 ('Checkers', 2, 2),
-('Uno', 4, 2);
+('Uno', 4, 2),
+('War', 8, 4),
+('Blackjack', 4, 2),
+('RoShamBo', 4, 2);
 
 -- -----------------------------------------------------------
 -- 3. Scenario 1: A Finished Tic-Tac-Toe Game (Game 1)
