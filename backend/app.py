@@ -18,15 +18,11 @@ MIN_USERNAME_LENGTH = 5
 MAX_PASSWORD_LENGTH = 255
 MIN_PASSWORD_LENGTH = 8
 
+
 # initilizes Flask application.
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:8080"])
 
-# Sample game data.
-sample_games = [
-    {"id": 1, "type": "Tic-Tac-Toe", "name": "i want tic tac", "players": ["Alice", "Bob"], "data": "[0,4,1,2,6]"},
-    {"id": 2, "type": "Tic-Tac-Toe", "name": "naughts and crosses (oi mate)", "players": ["Charlie", "Bob"], "data": "[4,7,6,1,2]", "winner": "Charlie"},
-]
 
 # Database connection config
 env = dotenv.dotenv_values("personal.env")
@@ -41,20 +37,26 @@ db_config = {
 SECRET_KEY = env["JWT_SECRET_KEY"]
 
 
-'''
-@app.route("/players")
-def get_players():
+
+@app.route("/api/joinable-games")
+def get_joinable_games():
     try:
-        #conn = mysql.connector.connect(**db_config)
+        conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM players")
+        cursor.execute("""
+            SELECT G.gameID, G.typeName, G.name, G.creationDate, G.status, U.inviteCode, U.isPublic
+            FROM Game as G, UnstartedGame as U
+            WHERE G.gameID = U.gameID 
+            AND U.isPublic = 1;
+            """)
         rows = cursor.fetchall()
         cursor.close()
         conn.close()
         return jsonify(rows)
     except Exception as e:
+        print("error -- ", {"error": str(e)})
         return jsonify({"error": str(e)}), 500
-'''
+
 
 def get_db_connection():
     # Mysql information (change to match your database)

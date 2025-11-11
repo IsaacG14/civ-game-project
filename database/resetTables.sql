@@ -13,3 +13,5 @@ TRUNCATE TABLE plays;
 TRUNCATE TABLE unstartedgame;
 TRUNCATE TABLE users;
 SET FOREIGN_KEY_CHECKS = 1;
+
+-- You can also use "DROP SCHEMA `dbgame`" to delete the entire database.

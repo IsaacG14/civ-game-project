@@ -17,6 +17,8 @@ export default function Hub() {
   // Data from backend to be displayed on screen.
   const [hubData, setHubData] = useState(null);
 
+  const [joinableGames, setJoinableGames] = useState([]);
+
   // When page loads, check for token validity. If invalid token send user to login page.
   useEffect(() => {
     // Get token from local storage.
@@ -50,6 +52,22 @@ export default function Hub() {
         localStorage.removeItem("token");
         navigate("/login");
       });
+
+
+
+    fetch("http://localhost:5000/api/joinable-games") 
+      .then(res => {
+        if (!res.ok) throw new Error("Rejected request");
+        return res.json();
+      })
+      // If there is a valid response navigate to hub.
+      .then(games => {
+        console.log(games);
+        setJoinableGames(games);
+      });
+  
+
+
   }, [navigate]);
 
   // Deletes token from local storage and sends user to login page on button click.
@@ -94,22 +112,7 @@ export default function Hub() {
         <div className = "hubColumn">
           <div className = "hubBox">
             <h2 className = "formHeader">Current Games</h2>
-              <p>Game 1</p>
-              <p>Game 2</p>
-              <p>Game 3</p>
-              <p>Game 4</p>
-              <p>Game 5</p>
-              <p>Game 6</p>
-              <p>Game 7</p>
-              <p>Game 8</p>
-              <p>Game 9</p>
-              <p>Game 10</p>
-              <p>Game 11</p>
-              <p>Game 12</p>
-              <p>Game 13</p>
-              <p>Game 14</p>
-              <p>Game 15</p>
-              <p>Game 16</p>
+            <p>No Current Games</p>
           </div>
           <button className = "hubButton">Create Game</button>
         </div>
@@ -117,7 +120,9 @@ export default function Hub() {
         <div className = "hubColumn">
           <div className = "hubBox">
             <h2 className = "formHeader">Joinable Games</h2>
-              <p>Nothing</p>
+            <div>{joinableGames.map(game => (<p key={game.gameID}>{
+              "Name: " + game.name} <br/> {"Type: " + game.typeName} <br/> {"Creation Date: " + game.creationDate
+            }</p>))}</div>
           </div>
           <button className = "hubButton">Join Private Game</button>
         </div>
