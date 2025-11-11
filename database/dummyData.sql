@@ -93,7 +93,20 @@ INSERT INTO Plays (userID, gameID)
 VALUES (3, 4);
 
 -- -----------------------------------------------------------
--- 7. Populate HasStatsFor (Leaderboard Stats)
+-- 7. Scenario 5: Finished Blackjack Game (Game 5)
+INSERT INTO Game (gameID, typeName, name, creationDate, startDate, status)
+VALUES (5, 'Blackjack', 'Lucky Blackjack Table', '2025-11-09 21:00:00', '2025-11-09 21:05:00', 'Finished');
+
+INSERT INTO FinishedGame (gameID, finishDate, endedEarly, results)
+VALUES (5, '2025-11-09 21:20:00', 0, '{"winner_id": 4, "scores": {"willy": 21, "bob": 19, "charlie": 18}}');
+
+INSERT INTO Plays (userID, gameID, resigned, score, `rank`) VALUES
+(4, 5, 0, 21, 1),  -- Willy (Winner)
+(2, 5, 0, 19, 2),  -- Bob
+(3, 5, 0, 18, 3);  -- Charlie
+
+-- -----------------------------------------------------------
+-- . Populate HasStatsFor (Leaderboard Stats)
 -- Based on the finished game (Scenario 1), we give Alice 1 win
 -- and Bob 1 loss for TicTacToe. We'll add some other random stats.
 INSERT INTO HasStatsFor (userID, typeName, wins, losses)
