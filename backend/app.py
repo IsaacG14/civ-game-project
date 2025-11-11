@@ -123,7 +123,7 @@ def require_jwt(f):
 
 # Finds if user exists in list of example users. 
 def find_user(username):
-    for user in users:
+    for user in Users:
         if user["username"] == username:
             return user
     return None
