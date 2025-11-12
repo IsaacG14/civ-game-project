@@ -38,31 +38,40 @@ SECRET_KEY = env["JWT_SECRET_KEY"]
 
 
 
-@app.route("/api/joinable-games")
-def get_joinable_games():
+def query_db(endpoint_name: str, query_template: str, params: list[any] | dict[str, any] = []):
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("""
-            SELECT G.gameID, G.typeName, G.name, G.creationDate, G.status, U.inviteCode, U.isPublic
-            FROM Game as G, UnstartedGame as U
-            WHERE G.gameID = U.gameID 
-            AND U.isPublic = 1;
-            """)
+        cursor.execute(query_template, params)
         rows = cursor.fetchall()
         cursor.close()
         conn.close()
         return jsonify(rows)
     except Exception as e:
-        print("error -- ", {"error": str(e)})
+        print("error at endpoint", endpoint_name, "--", e)
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/api/joinable-games")
+def get_joinable_games():
+    return query_db("/api/joinable-games", 
+            """
+            SELECT G.gameID, G.typeName, G.name, G.creationDate, G.status, U.inviteCode, U.isPublic
+            FROM Game as G, UnstartedGame as U
+            WHERE G.gameID = U.gameID 
+            AND U.isPublic = 1;
+            """)
+
+@app.route("/api/game-<int:id>")
+def get_game(id: int):
+    return query_db("/api/game-<int:id>", 
+            """
+            SELECT * FROM Game WHERE gameID = %s
+            """, [id])
+
+
 def get_db_connection():
-    # Mysql information (change to match your database)
-    return mysql.connector.connect(
-        **db_config
-    )
+    return mysql.connector.connect(**db_config)
 
 
 # Checks for validity of token.
@@ -103,13 +112,6 @@ def require_jwt(f):
         
         return f(*args, **kwargs)
     return decorated
-
-# Finds if user exists in list of example users. 
-def find_user(username):
-    for user in Users:
-        if user["username"] == username:
-            return user
-    return None
 
 # Handles login attempts.
 @app.route("/log_in", methods=["POST"])

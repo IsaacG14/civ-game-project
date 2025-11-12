@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useLayoutEffect, useRef } from 'react';
-import StartGame from './game/main';
+import startGame from './game/main';
 import { EventBus } from './game/EventBus';
 
 export interface IRefPhaserGame
@@ -42,7 +42,7 @@ export const PhaserGame = forwardRef<IRefPhaserGame, IProps>(({ onSceneReady: on
         if (game.current === null)
         {
             // We start a new game if one doesn't already exist.
-            game.current = StartGame("game-container");
+            game.current = startGame("game-container");
 
             // Update the ref to point to the right objects
             const newRefValue = { game: game.current, scene: null };

@@ -57,7 +57,7 @@ export default function Hub() {
 
     fetch("http://localhost:5000/api/joinable-games") 
       .then(res => {
-        if (!res.ok) throw new Error("Rejected request");
+        if (!res.ok) throw new Error("Rejected request -- " + res.body);
         return res.json();
       })
       // If there is a valid response navigate to hub.
