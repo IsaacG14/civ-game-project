@@ -37,15 +37,12 @@ db_config = {
 SECRET_KEY = env["JWT_SECRET_KEY"]
 
 
-
 def query_db(endpoint_name: str, query_template: str, params: list[any] | dict[str, any] = []):
     try:
-        conn = get_db_connection()
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute(query_template, params)
-        rows = cursor.fetchall()
-        cursor.close()
-        conn.close()
+        with get_db_connection() as conn:
+            with conn.cursor(dictionary=True) as cursor:
+                cursor.execute(query_template, params)
+                rows = cursor.fetchall()
         return jsonify(rows)
     except Exception as e:
         print("error at endpoint", endpoint_name, "--", e)
@@ -64,7 +61,7 @@ def get_joinable_games():
 
 @app.route("/api/game-<int:id>")
 def get_game(id: int):
-    return query_db("/api/game-<int:id>", 
+    return query_db(f"/api/game-<int:id> with id={id}", 
             """
             SELECT * FROM Game WHERE gameID = %s
             """, [id])
