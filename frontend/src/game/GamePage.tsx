@@ -12,18 +12,23 @@ type Game = {
 };
 
 
-function fetchGame(id: number, setGame: (value: Game) => void) {
-    fetch(`http://localhost:5000/api/game-${id}`) 
-        .then(res => {
-            if (!res.ok) throw new Error("Rejected request --.");
-            return res.json();
-        })
-        .then(g => {
-            console.log("Game received:");
-            console.log(g);
-            setGame(g);
-        })
-        .catch(console.error);
+async function fetchGame(id: number, setGame: (value: Game | undefined) => void) {
+
+    const res = await fetch(`http://localhost:5000/api/game-${id}`);
+
+    if (!res.ok) {
+        console.error('Server responded with failure', res);
+        if (res.status === 404) {
+            setGame(undefined);
+            return;
+        }
+        else {
+            throw new Error(`Request failed: ${res.status} ${res.statusText}`);
+        }
+    }
+
+    const g = await res.json();
+    setGame(g);
 }
 
 
@@ -35,7 +40,7 @@ export default function GamePage(): ReactElement {
     return (
         <div>
             <h1>Game</h1>
-            <p>{JSON.stringify(game)}</p>
+            <p>{game ? (`${game.gameID}. ${game.name}: ${game.status} ${game.typeName} game`) : ""}</p>
             <TextInput id="idText" label="Game ID" value={idText} setValue={setIdText} />
             <button type="button" onClick={()=>fetchGame(+idText, setGame)}>Get Game</button>
         </div>

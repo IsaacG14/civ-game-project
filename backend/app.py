@@ -37,38 +37,47 @@ db_config = {
 SECRET_KEY = env["JWT_SECRET_KEY"]
 
 
-def query_db(endpoint_name: str, query_template: str, params: list[any] | dict[str, any] = []):
-    try:
-        with get_db_connection() as conn:
-            with conn.cursor(dictionary=True) as cursor:
-                cursor.execute(query_template, params)
-                rows = cursor.fetchall()
-        return jsonify(rows)
-    except Exception as e:
-        print("error at endpoint", endpoint_name, "--", e)
-        return jsonify({"error": str(e)}), 500
+def get_db_connection():
+    return mysql.connector.connect(**db_config)
+
+def query_db(query_template: str, params: list[any] | dict[str, any] = []):
+    with get_db_connection() as conn:
+        with conn.cursor(dictionary=True) as cursor:
+            cursor.execute(query_template, params)
+            rows = cursor.fetchall()
+    return rows
 
 
 @app.route("/api/joinable-games")
 def get_joinable_games():
-    return query_db("/api/joinable-games", 
+    try:
+        value = query_db(
             """
             SELECT G.gameID, G.typeName, G.name, G.creationDate, G.status, U.inviteCode, U.isPublic
             FROM Game as G, UnstartedGame as U
             WHERE G.gameID = U.gameID 
             AND U.isPublic = 1;
             """)
+        return jsonify(value), 200
+    except Exception as e:
+        print("error at endpoint /api/joinable-games --", e)
+        return jsonify({"error": str(e)}), 500
+    
 
 @app.route("/api/game-<int:id>")
 def get_game(id: int):
-    return query_db(f"/api/game-<int:id> with id={id}", 
+    try:
+        value = query_db(
             """
             SELECT * FROM Game WHERE gameID = %s
             """, [id])
-
-
-def get_db_connection():
-    return mysql.connector.connect(**db_config)
+        if len(value) == 0:
+            return None, 404
+        else:
+            return jsonify(value[0]), 200
+    except Exception as e:
+        print(f"error at endpoint /api/game-<int:id> with id={id} --", e)
+        return jsonify({"error": str(e)}), 500
 
 
 # Checks for validity of token.
