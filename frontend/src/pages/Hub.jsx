@@ -111,7 +111,7 @@ export default function Hub() {
       <div className = "hubContent">
         <div className = "hubColumn">
           <div className = "hubBox">
-            <h2 className = "formHeader">Current Games</h2>
+            <h2 className = "formHeading">Current Games</h2>
             <p>No Current Games</p>
           </div>
           <button className = "hubButton">Create Game</button>
@@ -119,10 +119,14 @@ export default function Hub() {
 
         <div className = "hubColumn">
           <div className = "hubBox">
-            <h2 className = "formHeader">Joinable Games</h2>
-            <div>{joinableGames.map(game => (<p key={game.gameID}>{
-              "Name: " + game.name} <br/> {"Type: " + game.typeName} <br/> {"Creation Date: " + game.creationDate
-            }</p>))}</div>
+            <h2 className = "formHeading">Joinable Games</h2>
+            <div>
+              {joinableGames.map(game => (
+                <p key={game.gameID}>
+                  {"Name: " + game.name} <br/> {"Type: " + game.typeName} <br/> {"Creation Date: " + game.creationDate}
+                </p>
+              ))}
+            </div>
           </div>
           <button className = "hubButton">Join Private Game</button>
         </div>
