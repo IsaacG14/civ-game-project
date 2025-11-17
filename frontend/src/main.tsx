@@ -7,7 +7,7 @@ import CreateAccountPage from "./pages/CreateAccountPage.jsx";
 import Hub from "./pages/Hub.jsx";
 import Account from "./pages/AccountInfoPage.jsx";
 import Leaderboard from "./pages/Leaderboard.jsx";
-import GamePage from "./game/GamePage.js";
+import GamePage from "./pages/GamePage.js";
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>

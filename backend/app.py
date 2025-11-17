@@ -72,7 +72,7 @@ def get_game(id: int):
             SELECT * FROM Game WHERE gameID = %s
             """, [id])
         if len(value) == 0:
-            return None, 404
+            return "not found", 404
         else:
             return jsonify(value[0]), 200
     except Exception as e:
