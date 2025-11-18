@@ -2,7 +2,7 @@ import { ReactElement, useEffect, useLayoutEffect, useRef, useState } from "reac
 import TextInput from "../components/TextInput";
 import createGame from "../game/gameConstructor";
 import { EventBus } from "../game/EventBus";
-import { GAME_DATA_KEY, GameData } from "../constants";
+import { eventNames, GAME_DATA_KEY, GameData } from "../constants";
 
 
 
@@ -51,6 +51,9 @@ export default function GamePage(): ReactElement {
 
         if (id === undefined) return;
 
+        // add a listener to the done-loading event that calls onDoneLoading
+        EventBus.on(eventNames.DONE_LOADING, onDoneLoading);
+
         fetchGameData(id)
         .then(g => {
             setGameData(g);
@@ -60,31 +63,20 @@ export default function GamePage(): ReactElement {
         });
 
 
-        return () =>
-        {
+        return () => {
             if (phaserRef.current) {
                 phaserRef.current.destroy(true);
                 phaserRef.current = null;
+                EventBus.removeAllListeners();
             }
         }
     }, [id]);
 
     
-    function onSceneReady(scene_instance: Phaser.Scene): void {
-        const latest = gameDataRef.current;
-        console.log(`React says scene is ready`, scene_instance);
-        console.log(latest);
-        scene_instance.registry.set(GAME_DATA_KEY, latest);
+    function onDoneLoading(scene_instance: Phaser.Scene): void {
+        scene_instance.registry.set(GAME_DATA_KEY, gameDataRef.current);
+        EventBus.emit(eventNames.GAME_DATA_UPDATED);
     }
-
-    // add a listener to the current-scene-ready event that calls onSceneReady
-    useEffect(() => {
-        EventBus.on('current-scene-ready', onSceneReady);
-
-        return () => { 
-            EventBus.off('current-scene-ready', onSceneReady); 
-        };
-    }, []);
     
 
     return (

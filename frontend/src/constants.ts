@@ -9,3 +9,21 @@ export type GameData = {
 };
 
 export const GAME_DATA_KEY = "game-data";
+
+
+export const eventNames = {
+    DONE_LOADING: Symbol('event-done-loading'),
+    GAME_DATA_UPDATED: Symbol('event-game-data-updated'),
+};
+Object.freeze(eventNames);
+
+
+export const typeNames = {
+    BLACKJACK: 'Blackjack',
+    TICTACTOE: 'TicTacToe',
+    WAR: 'War',
+    ROSHAMBO: 'RoShamBo',
+    UNO: 'Uno',
+    CHECKERS: 'Checkers',
+}
+Object.freeze(typeNames);
