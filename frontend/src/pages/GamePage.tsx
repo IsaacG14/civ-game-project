@@ -82,13 +82,18 @@ export default function GamePage(): ReactElement {
     return (
         <div>
             <h1>Game</h1>
+
             <TextInput id="idText" label="Game ID" value={idText} setValue={setIdText} />
+
             <button type="button" onClick={_=>setId(+idText)}>Get Game</button>
+
             <p>{gameData ? (`${gameData.gameID}. ${gameData.name}: ${gameData.status} ${gameData.typeName} game`) : ""}</p>
+
             <div id="game-container"/>
-            <button type="button" onClick={() => setGameData(
-                    x => (x === undefined) ? undefined : {...x, name: x.name+"a"}
-                )}>Update Name</button>
+            
+            <button type="button" onClick={
+                () => setGameData(x => x ? {...x} : undefined)
+            }>Update Name</button>
         </div>
     );
 }

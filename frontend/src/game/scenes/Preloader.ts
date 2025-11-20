@@ -35,10 +35,10 @@ export class Preloader extends Scene
         EventBus.on(eventNames.GAME_DATA_UPDATED, this.switchScene, this);
         EventBus.on('destroy', () => {
             EventBus.off(eventNames.GAME_DATA_UPDATED, this.switchScene);
-        })
+        });
         EventBus.on('shutdown', () => {
             EventBus.off(eventNames.GAME_DATA_UPDATED, this.switchScene);
-        })
+        });
     }
 
     preload ()
@@ -69,7 +69,7 @@ export class Preloader extends Scene
             this.scene.start('MainScene');
         }
         else if (gameData.typeName === typeNames.TICTACTOE) {
-            this.scene.start('MainScene');
+            this.scene.start('TicTacToeScene');
         }
         else if (gameData.typeName === typeNames.UNO) {
             this.scene.start('MainScene');

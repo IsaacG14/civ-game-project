@@ -1,6 +1,7 @@
 import { AUTO, Game } from 'phaser';
 import { Preloader } from './scenes/Preloader';
 import MainScene from './scenes/MainScene';
+import TicTacToeScene from './scenes/TicTacToeScene';
 
 //  Find out more information about the Game Config at:
 //  https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
@@ -12,7 +13,8 @@ const config: Phaser.Types.Core.GameConfig = {
     backgroundColor: '#028af8',
     scene: [
         Preloader,
-        MainScene
+        MainScene,
+        TicTacToeScene
     ]
 };
 
