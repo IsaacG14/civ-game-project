@@ -6,12 +6,12 @@ To install all the required python packages, use `uv sync`
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from functools import wraps
+import os
 import jwt
 import datetime
 import mysql.connector
 import bcrypt
 import dotenv
-
 
 MAX_USERNAME_LENGTH = 20
 MIN_USERNAME_LENGTH = 5
@@ -21,11 +21,11 @@ MIN_PASSWORD_LENGTH = 8
 
 # initilizes Flask application.
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:8080"])
+CORS(app)
 
 
 # Database connection config
-env = dotenv.dotenv_values("personal.env")
+env = dotenv.dotenv_values(os.path.abspath("personal.env"))
 
 db_config = {
     "host": env["DB_HOST"], 
@@ -36,6 +36,134 @@ db_config = {
 
 SECRET_KEY = env["JWT_SECRET_KEY"]
 
+# Decorator function added as @require_jwt (below @app_route) which can be used to protect routes from access by users without a valid JWT token.
+# Currently not used.
+def require_jwt(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = request.headers.get("Authorization")
+        if not token:
+            return jsonify({"message": "Missing token"}), 401
+
+        try:
+            token = token.split(" ")[1]  # remove "Bearer"
+            decoded = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+            request.user_id = decoded["user_id"]  # attach to request
+        except Exception:
+            return jsonify({"message": "Invalid or expired token"}), 401
+        
+        return f(*args, **kwargs)
+    return decorated
+
+def get_user_id_from_token(token):
+    try:
+        # Decode the token
+        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        user_id = payload.get("user_id")
+        return user_id
+    except jwt.ExpiredSignatureError:
+        print("Token has expired")
+        return None
+    except jwt.InvalidTokenError:
+        print("Invalid token")
+        return None
+
+@app.route("/api/get_player_info")
+@require_jwt
+def get_player_info():
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return jsonify({"message": "Missing token"}), 401
+    
+    token = auth_header.split(" ")[1]
+    user_id = get_user_id_from_token(token)
+    if not user_id:
+        return jsonify({"message": "Invalid or expired token"}), 401
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        query = "SELECT username, user_id, email FROM Users WHERE user_id = %s"
+        cursor.execute(query, (user_id,))
+        row = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
+        if row:
+            return jsonify(row)
+        else:
+            return jsonify({"message": "User not found"}), 404
+    except Exception as e:
+        print("error -- ", {"error": str(e)})
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/change_email", methods=["PUT"])
+def change_email():
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return jsonify({"message": "Missing token"}), 401
+    
+    token = auth_header.split(" ")[1]
+    user_id = get_user_id_from_token(token)
+    if not user_id:
+        return jsonify({"message": "Invalid or expired token"}), 401
+
+    # Get email from JSON body (NOT headers!)
+    data = request.get_json()
+    new_email = data.get("email")
+    if not new_email:
+        return jsonify({"message": "Missing email"}), 400
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        query = "UPDATE users SET email = %s WHERE user_id = %s"
+        cursor.execute(query, (new_email, user_id))
+        conn.commit()  # important!
+        cursor.close()
+        conn.close()
+
+        return jsonify({"message": "Email updated successfully!"}), 200
+
+    except Exception as e:
+        print("error -- ", {"error": str(e)})
+        return jsonify({"error": "Internal server error"}), 500
+    
+@app.route("/change_password", methods=["PUT"])
+def change_password():
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return jsonify({"message": "Missing token"}), 401
+
+    token = auth_header.split(" ")[1]
+    user_id = get_user_id_from_token(token)
+    if not user_id:
+        return jsonify({"message": "Invalid or expired token"}), 401
+
+    # Get password from JSON body
+    data = request.get_json()
+    password = data.get("password")
+    if (len(password) > MAX_PASSWORD_LENGTH or len(password) < MIN_PASSWORD_LENGTH):
+        return jsonify({"success": False, "error": f"Password length must be {MIN_PASSWORD_LENGTH}-{MAX_PASSWORD_LENGTH}"}), 400
+    password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    password = password.decode('utf-8')
+    if not password:
+        return jsonify({"message": "Missing password"}), 400
+
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        query = "UPDATE users SET password_hash = %s WHERE user_id = %s"
+        cursor.execute(query, (password, user_id))
+        conn.commit()  # important!
+        cursor.close()
+        conn.close()
+
+        return jsonify({"message": "Password updated successfully!"}), 200
+
+    except Exception as e:
+        print("error -- ", {"error": str(e)})
+        return jsonify({"error": "Internal server error"}), 500
 
 
 @app.route("/api/joinable-games")
@@ -84,25 +212,6 @@ def hub_data():
         return jsonify({"message": "Token expired"}), 401
     except jwt.InvalidTokenError:
         return jsonify({"message": "Invalid token"}), 401
-
-# Decorator function added as @require_jwt (below @app_route) which can be used to protect routes from access by users without a valid JWT token.
-# Currently not used.
-def require_jwt(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        token = request.headers.get("Authorization")
-        if not token:
-            return jsonify({"message": "Missing token"}), 401
-
-        try:
-            token = token.split(" ")[1]  # remove "Bearer"
-            decoded = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-            request.user_id = decoded["user_id"]  # attach to request
-        except Exception:
-            return jsonify({"message": "Invalid or expired token"}), 401
-        
-        return f(*args, **kwargs)
-    return decorated
 
 # Finds if user exists in list of example users. 
 def find_user(username):
