@@ -49,7 +49,7 @@ button {
     justify-content: center;
     align-items: flex-start;
     gap: 60px;
-    margin-top: 120px;
+    margin-top: 40px;
     flex-wrap: wrap;
 }
 
@@ -57,12 +57,13 @@ button {
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-top: 0;
 }
 
 .hubBox {
     background-color: rgb(199, 96, 1);
-    width: 280px;
-    height: 500px;
+    width: 300px;
+    height: 650px;
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(245, 158, 100, 0.4);
@@ -71,11 +72,15 @@ button {
 }
 /*All Leaderboard Styles*/
 .leaderboardColumn {
+    position: fixed;
+    top: 70px;
     display: flex;
     flex-direction: column;
     width: 700px;
     background-color: var(--primary);
     border-radius: 8px;
+    overflow-y: auto;
+    height: calc(100vh - 60px);
 }
 .leaderboardRow {
     display: flex;
