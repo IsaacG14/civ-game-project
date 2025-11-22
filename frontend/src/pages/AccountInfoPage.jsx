@@ -65,7 +65,16 @@ export default function Account() {
     body: JSON.stringify({ email: newEmail }),
   })
     .then(res => res.json().then(data => {
-        !res.ok ? setError("Email already taken") : navigate(0)
+      if (!res.ok){
+        if (res.status === 401){
+            localStorage.removeItem("token")
+            navigate("/hub")
+        }
+        else {setError("Email already taken")}
+      }
+      else{
+        navigate(0)
+      }
     }))
   }
   
@@ -81,7 +90,16 @@ export default function Account() {
     body: JSON.stringify({ password: newPassword }),
   })
     .then(res => res.json().then(data => {
-        !res.ok ? setError(data.error) : navigate(0)
+      if (!res.ok){
+        if (res.status === 401){
+            localStorage.removeItem("token")
+            navigate("/hub")
+        }
+        else {setError(data.error)}
+      }
+      else{
+        navigate(0)
+      }
     }))
   }
 
@@ -94,11 +112,25 @@ export default function Account() {
     setShowPasswordInput(true)
   }
 
-
-
   function handleDeleteAccount(userID) {
     console.log("Delete account was clicked by: ", userID);
+
+     fetch("http://localhost:5000/delete_account", {
+    method: "DELETE",
+    headers: {
+      Authorization: "Bearer " + localStorage.getItem("token"),
+    }})
+    .then(res => {
+        if (!res.ok) {
+          throw new Error("Unauthorized");
+        }
+        localStorage.removeItem("token");
+        navigate("/hub");
+        return res.json();
+      })
   }
+
+
   return (
     <div className = "fullScreen">
           <Navbar 

@@ -55,7 +55,7 @@ def require_jwt(f):
         return f(*args, **kwargs)
     return decorated
 
-def get_user_id_from_token(token):
+'''def get_user_id_from_token(token):
     try:
         # Decode the token
         payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
@@ -66,19 +66,12 @@ def get_user_id_from_token(token):
         return None
     except jwt.InvalidTokenError:
         print("Invalid token")
-        return None
+        return None'''
 
 @app.route("/api/get_player_info")
 @require_jwt
 def get_player_info():
-    auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        return jsonify({"message": "Missing token"}), 401
-    
-    token = auth_header.split(" ")[1]
-    user_id = get_user_id_from_token(token)
-    if not user_id:
-        return jsonify({"message": "Invalid or expired token"}), 401
+    user_id = request.user_id
 
     try:
         conn = get_db_connection()
@@ -97,16 +90,31 @@ def get_player_info():
         print("error -- ", {"error": str(e)})
         return jsonify({"error": str(e)}), 500
 
+
+@app.route("/delete_account", methods=["DELETE"])
+@require_jwt
+def delete_account():
+    user_id = request.user_id
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        query = "DELETE from users where user_id = %s"
+        cursor.execute(query, (user_id,))
+        conn.commit()  # important!
+        cursor.close()
+        conn.close()
+
+        return jsonify({"message": "Account Successfully Deleted!"}), 200
+
+    except Exception as e:
+        print("error -- ", {"error": str(e)})
+        return jsonify({"error": "Internal server error"}), 500
+
+
 @app.route("/change_email", methods=["PUT"])
+@require_jwt
 def change_email():
-    auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        return jsonify({"message": "Missing token"}), 401
-    
-    token = auth_header.split(" ")[1]
-    user_id = get_user_id_from_token(token)
-    if not user_id:
-        return jsonify({"message": "Invalid or expired token"}), 401
+    user_id = request.user_id
 
     # Get email from JSON body (NOT headers!)
     data = request.get_json()
@@ -129,15 +137,9 @@ def change_email():
         return jsonify({"error": "Internal server error"}), 500
     
 @app.route("/change_password", methods=["PUT"])
+@require_jwt
 def change_password():
-    auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        return jsonify({"message": "Missing token"}), 401
-
-    token = auth_header.split(" ")[1]
-    user_id = get_user_id_from_token(token)
-    if not user_id:
-        return jsonify({"message": "Invalid or expired token"}), 401
+    user_id = request.user_id
 
     # Get password from JSON body
     data = request.get_json()
