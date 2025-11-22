@@ -1,23 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Navbar from "../components/Navbar"
 
-/*Remove after backend implemented*/
-const dummyData = {
-  TicTacToe: [["Admin", 100, 0], ["Starfallen", 10, 20], ["Noob", 0, 100], ["xXGamerXx", 30, 12]],
-  Checkers: [["Bob", 10, 3], ["Charlie", 8, 8]],
-  Uno: [["Alice", 5, 2]],
-  War: [["Starfallen", 7, 1]],
-  Blackjack: [["Admin", 15, 5]],
-  RoShamBo: [["Willy", 1, 0]]
-  }
+const gameTypes = ["TicTacToe", "Checkers", "Uno", "War", "Blackjack", "RoShamBo"];
 
 export default function Leaderboard() {
   const navigate = useNavigate();
 
+  const [leaderboardData, setLeaderboardData] = useState([]);
   const[selectedGame, setSelectedGame] = useState("TicTacToe");
   
+  useEffect(() => {
+    fetch(`http://localhost:5000/api/leaderboard/${selectedGame}`)
+      .then(res => {
+        if (!res.ok) throw new Error("Rejected request");
+        return res.json();
+      })
+      .then(data => {
+        console.log("Leaderboard:", data);
+        setLeaderboardData(data);
+      })
+      .catch(err => console.error("Fetch error:", err));
+  }, [selectedGame]);
+
   function logout() {
     localStorage.removeItem("token");
     navigate("/login");
@@ -28,7 +34,7 @@ export default function Leaderboard() {
   function hub() {
     navigate("/hub");
   }
-  const currentLeaderboard = dummyData[selectedGame] || [];
+
   return (
     <div className = "fullScreen">
       <Navbar 
@@ -41,7 +47,7 @@ export default function Leaderboard() {
       <div className = "leaderboardColumn">
         <h1 className = "russo">Leaderboard</h1>
         <div className="gameButtons" style={{ marginBottom: "10px" }}>
-          {Object.keys(dummyData).map(game => (
+          {gameTypes.map(game => (
             <button 
               key={game} 
               onClick={() => setSelectedGame(game)}
@@ -65,12 +71,12 @@ export default function Leaderboard() {
           <span className = "wins">W</span>
           <span className = "losses">L</span>
         </div>
-        {currentLeaderboard.map((entry, index) => (
+        {leaderboardData.map((entry, index) => (
           <div key={index} className = "leaderboardRow">
             <span className = "place">{index + 1}</span>
-            <span className = "username">{entry[0]}</span>
-            <span className = "wins">{entry[1]}</span>
-            <span className = "losses">{entry[2]}</span>
+            <span className = "username">{entry.username}</span>
+            <span className = "wins">{entry.wins}</span>
+            <span className = "losses">{entry.losses}</span>
           </div>
         ))}
       </div>

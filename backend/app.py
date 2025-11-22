@@ -57,13 +57,32 @@ def get_joinable_games():
         print("error -- ", {"error": str(e)})
         return jsonify({"error": str(e)}), 500
 
+@app.route("/api/leaderboard/<typeName>")
+def get_leaderboard(typeName):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT username, wins, losses
+            FROM Users u
+            JOIN HasStatsFor h ON u.user_id = h.userID
+            WHERE h.typeName = %s
+            ORDER BY h.wins DESC, h.losses ASC;
+            """, (typeName,))
+        rows = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return jsonify(rows)
+    except Exception as e:
+        print("error -- ", {"error": str(e)})
+        return jsonify({"error": str(e)}), 500
+
 
 def get_db_connection():
     # Mysql information (change to match your database)
     return mysql.connector.connect(
         **db_config
     )
-
 
 # Checks for validity of token.
 @app.route("/api/hub")
