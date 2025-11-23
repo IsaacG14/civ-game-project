@@ -49,6 +49,10 @@ export class Preloader extends Scene
         this.load.image('logo', 'logo.png');
         this.load.image('star', 'star.png');
         this.load.image('background', 'bg.png');
+
+        this.load.image('ttt-grid', 'tictactoe/grid.png');
+        this.load.image('ttt-x', 'tictactoe/x-symbol.png');
+        this.load.image('ttt-o', 'tictactoe/o-symbol.png');
     }
 
     switchScene() {
