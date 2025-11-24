@@ -44,10 +44,10 @@ def get_joinable_games():
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
         cursor.execute("""
-            SELECT G.gameID, G.typeName, G.name, G.creationDate, G.status, U.inviteCode, U.isPublic
-            FROM Game as G, UnstartedGame as U
-            WHERE G.gameID = U.gameID 
-            AND U.isPublic = 1;
+            SELECT G.game_id, G.type_name, G.name, G.creation_date, G.status, U.invite_code, U.is_public
+            FROM game as G, unstarted_game as U
+            WHERE G.game_id = U.game_id 
+            AND U.is_public = 1;
             """)
         rows = cursor.fetchall()
         cursor.close()
@@ -104,12 +104,6 @@ def require_jwt(f):
         return f(*args, **kwargs)
     return decorated
 
-# Finds if user exists in list of example users. 
-def find_user(username):
-    for user in Users:
-        if user["username"] == username:
-            return user
-    return None
 
 # Handles login attempts.
 @app.route("/log_in", methods=["POST"])
@@ -128,7 +122,7 @@ def log_in():
     try:
         cursor = conn.cursor()
         # Use parameterized query to avoid SQL injection
-        cursor.execute("SELECT user_id, password_hash FROM users WHERE username = %s", (username,))        
+        cursor.execute("SELECT user_id, password_hash FROM user WHERE username = %s", (username,))        
         row = cursor.fetchone()
         if row:
             id = row[0]
@@ -178,7 +172,7 @@ def sign_up():
         cursor = conn.cursor()
         # Parameterized query prevents SQL injection
         cursor.execute(
-            "INSERT INTO users (username, email, password_hash) VALUES (%s, %s, %s)",
+            "INSERT INTO user (username, email, password_hash) VALUES (%s, %s, %s)",
             (username, email, password)
         )
         conn.commit()
