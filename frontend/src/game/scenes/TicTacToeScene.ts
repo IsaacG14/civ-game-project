@@ -1,5 +1,4 @@
 import { GAME_DATA_KEY } from "../../constants";
-import { EventBus } from "../EventBus";
 
 type TTTState = {
     turn: 'x'|'o';
@@ -22,18 +21,12 @@ export default class TicTacToeScene extends Phaser.Scene {
     create()
     {
         const gameData = this.registry.get(GAME_DATA_KEY);
-        const stateString = "..x.o..x.";
+        const stateString = "..x.x.oo."; // TODO: get this from the database
 
-        const iconXPos = [300, 512, 724];
-        const iconYPos = [180, 388, 580];
+        const iconXPos = [304, 512, 720];
+        const iconYPos = [193, 396, 588];
 
-        const tempState = this.parseState(stateString);
-        if (tempState !== null) {
-            this.gameState = tempState;
-        }
-        else {
-            console.error("could not parse stateString correctly: ", stateString);
-        }
+        this.gameState = this.parseState(stateString);
 
         this.camera = this.cameras.main;
         this.camera.setBackgroundColor('#125915');
@@ -84,9 +77,11 @@ export default class TicTacToeScene extends Phaser.Scene {
         }
     }
 
-    private parseState(stateString: string): TTTState | null {
-        if (stateString.length !== 9) return null;
-
+    private parseState(stateString: string): TTTState {
+        if (stateString.length !== 9) {
+            throw new Error(`TicTacToe stateString must contain 9 characters. stateString=${stateString}`);
+        }
+        
         let spaces: ('x'|'o'|'.')[][] = [[], [], []];
         let i = 0;
         let xCount = 0;
@@ -95,33 +90,17 @@ export default class TicTacToeScene extends Phaser.Scene {
         for (let c of stateString) {
             let row = spaces[Math.floor(i/3)];
 
-            if (c === 'x') {
-                row.push('x');
-                xCount++;
+            if (c !== 'x' && c !== 'o' && c !== '.') {
+                throw new Error(`TicTacToe stateString must only include 'x', 'o', and '.' characters. Invalid character '${c}'.`);
             }
-            else if (c === 'o') {
-                row.push('o');
-                oCount++;
-            }
-            else if (c === '.') {
-                row.push('.');
-            }
-            else {
-                return null;
-            }
+
+            row.push(c);
+            if (c === 'x') xCount++;
+            if (c === 'o') oCount++;
             i++;
         }
 
-        let turn: ('x'|'o');
-        if (xCount === oCount) {
-            turn = 'x';
-        }
-        else if (xCount === oCount+1) {
-            turn = 'o';
-        }
-        else {
-            return null;
-        }
+        const turn = xCount <= oCount ? 'x' : 'o';
 
         return { turn, spaces };
     }
