@@ -64,11 +64,11 @@ def get_leaderboard(typeName):
         cursor = conn.cursor(dictionary=True)
         cursor.execute("""
             SELECT username, wins, losses
-            FROM Users u
-            JOIN HasStatsFor h ON u.user_id = h.userID
-            WHERE h.typeName = %s
+            FROM User u
+            JOIN Has_Stats_For h ON u.user_id = h.user_id
+            WHERE h.type_name = %s
             ORDER BY h.wins DESC, h.losses ASC;
-            """, (typeName,))
+            """, (type_name,))
         rows = cursor.fetchall()
         cursor.close()
         conn.close()
