@@ -77,8 +77,8 @@ export default function LoginPage() {
       <form className="formContainer"> {/* this is a form instead of a div just so the password field doesn't complain */}
         
         <h1 className="russo">LOG IN</h1>
-        <TextInput id="username" label="Username" value={username} setValue={setUsername} />
-        <TextInput id="password" label="Password" value={password} setValue={setPassword} isPassword />
+        <TextInput id="username" label="Username" value={username} setValue={setUsername} onEnterPress={handleLogin}/>
+        <TextInput id="password" label="Password" value={password} setValue={setPassword} onEnterPress={handleLogin} isPassword />
 
         {error && <p className="cuprum-600" style={{ color: "red" }}>{error}</p>}
 

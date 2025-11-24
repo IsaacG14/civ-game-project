@@ -12,8 +12,6 @@ export default function CreateAccountPage() {
   const navigate = useNavigate();
 
   const handleSignup = (e) => {
-    e.preventDefault();
-
     if (password !== confirmPassword) {
       setError("Passwords do not match!");
       return; 
@@ -25,12 +23,12 @@ export default function CreateAccountPage() {
       body: JSON.stringify({ username: username,email: email, password: password})
     })
       .then(res => res.json().then(data => {
-        !res.ok ? setError(data.error) : navigate("/")
+        setError(res.ok ? "" : data.error);
+        if (res.ok) navigate("/");
     }))
   };
 
   const backToLogin = (e) => {
-    e.preventDefault();
     navigate("/");
   };
 
@@ -39,10 +37,10 @@ export default function CreateAccountPage() {
       <form className = "formContainer">
         <h1 className="russo">CREATE ACCOUNT</h1>
 
-        <TextInput id="username" label="Username" value={username} setValue={setUsername} required />
-        <TextInput id="email" label="Email" value={email} setValue={setEmail} required />
-        <TextInput id="password" label="Password" value={password} setValue={setPassword} isPassword />
-        <TextInput id="confirmpas" label="Confirm Password" value={confirmPassword} setValue={setConfirmPassword} isPassword />
+        <TextInput id="username"   label="Username"         value={username}        setValue={setUsername}        onEnterPress={handleSignup} />
+        <TextInput id="email"      label="Email"            value={email}           setValue={setEmail}           onEnterPress={handleSignup} />
+        <TextInput id="password"   label="Password"         value={password}        setValue={setPassword}        onEnterPress={handleSignup} isPassword />
+        <TextInput id="confirmpas" label="Confirm Password" value={confirmPassword} setValue={setConfirmPassword} onEnterPress={handleSignup} isPassword />
 
         {error && <p className="cuprum-600" style={{ color: "red" }}>{error}</p>}
 

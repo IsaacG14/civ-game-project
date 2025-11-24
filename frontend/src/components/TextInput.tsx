@@ -4,6 +4,7 @@ type Props = {
     value: string, 
     setValue: (value: string) => void,
     isPassword: boolean,
+    onEnterPress: (e: any) => void,
 }
 
 export default function TextInput(props: Props) {
@@ -18,7 +19,13 @@ export default function TextInput(props: Props) {
                 value={props.value} 
                 className="cuprum-600"
                 onChange={(e) => props.setValue(e.target.value)} 
-                required />
+                onKeyUp={(e) => {
+                        if (e.key === "Enter") {
+                            e.currentTarget.blur();
+                            props.onEnterPress(e);
+                        }
+                    } 
+                }/>
         </div>
     );
 }
