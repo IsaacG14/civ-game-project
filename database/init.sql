@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS `Game` (
   FOREIGN KEY (`type_name`) REFERENCES `Game_Type` (`type_name`)
 );
 
-SELECT * FROM Users;
+SELECT * FROM User;
 
 
 -- Table `Unstarted_Game`

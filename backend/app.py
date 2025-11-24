@@ -57,8 +57,8 @@ def get_joinable_games():
         print("error -- ", {"error": str(e)})
         return jsonify({"error": str(e)}), 500
 
-@app.route("/api/leaderboard/<typeName>")
-def get_leaderboard(typeName):
+@app.route("/api/leaderboard/<type_name>")
+def get_leaderboard(type_name):
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
