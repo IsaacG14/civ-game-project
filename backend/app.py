@@ -37,7 +37,6 @@ db_config = {
 SECRET_KEY = env["JWT_SECRET_KEY"]
 
 # Decorator function added as @require_jwt (below @app_route) which can be used to protect routes from access by users without a valid JWT token.
-# Currently not used.
 def require_jwt(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -76,7 +75,7 @@ def get_player_info():
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        query = "SELECT username, user_id, email FROM Users WHERE user_id = %s"
+        query = "SELECT username, user_id, email FROM user WHERE user_id = %s"
         cursor.execute(query, (user_id,))
         row = cursor.fetchone()
         cursor.close()
@@ -98,7 +97,7 @@ def delete_account():
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        query = "DELETE from users where user_id = %s"
+        query = "DELETE from user where user_id = %s"
         cursor.execute(query, (user_id,))
         conn.commit()  # important!
         cursor.close()
@@ -124,7 +123,7 @@ def change_email():
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        query = "UPDATE users SET email = %s WHERE user_id = %s"
+        query = "UPDATE user SET email = %s WHERE user_id = %s"
         cursor.execute(query, (new_email, user_id))
         conn.commit()  # important!
         cursor.close()
@@ -155,7 +154,7 @@ def change_password():
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        query = "UPDATE users SET password_hash = %s WHERE user_id = %s"
+        query = "UPDATE user SET password_hash = %s WHERE user_id = %s"
         cursor.execute(query, (password, user_id))
         conn.commit()  # important!
         cursor.close()
@@ -174,10 +173,10 @@ def get_joinable_games():
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
         cursor.execute("""
-            SELECT G.gameID, G.typeName, G.name, G.creationDate, G.status, U.inviteCode, U.isPublic
-            FROM Game as G, UnstartedGame as U
-            WHERE G.gameID = U.gameID 
-            AND U.isPublic = 1;
+            SELECT G.game_id, G.type_name, G.name, G.creation_date, G.status, U.invite_code, U.is_public
+            FROM game as G, unstarted_game as U
+            WHERE G.game_id = U.game_id 
+            AND U.is_public = 1;
             """)
         rows = cursor.fetchall()
         cursor.close()
@@ -215,12 +214,6 @@ def hub_data():
     except jwt.InvalidTokenError:
         return jsonify({"message": "Invalid token"}), 401
 
-# Finds if user exists in list of example users. 
-def find_user(username):
-    for user in Users:
-        if user["username"] == username:
-            return user
-    return None
 
 # Handles login attempts.
 @app.route("/log_in", methods=["POST"])
@@ -239,7 +232,7 @@ def log_in():
     try:
         cursor = conn.cursor()
         # Use parameterized query to avoid SQL injection
-        cursor.execute("SELECT user_id, password_hash FROM users WHERE username = %s", (username,))        
+        cursor.execute("SELECT user_id, password_hash FROM user WHERE username = %s", (username,))        
         row = cursor.fetchone()
         if row:
             id = row[0]
@@ -289,7 +282,7 @@ def sign_up():
         cursor = conn.cursor()
         # Parameterized query prevents SQL injection
         cursor.execute(
-            "INSERT INTO users (username, email, password_hash) VALUES (%s, %s, %s)",
+            "INSERT INTO user (username, email, password_hash) VALUES (%s, %s, %s)",
             (username, email, password)
         )
         conn.commit()
@@ -297,7 +290,7 @@ def sign_up():
         return jsonify({"message": "User successfully created!"})
     except mysql.connector.Error as err:
         print("Error:", err)
-        return jsonify({"success": False, "error": "Username already taken"}), 400
+        return jsonify({"success": False, "error": "Username or email address already taken"}), 400
     finally:
         cursor.close()
         conn.close()

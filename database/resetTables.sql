@@ -4,14 +4,14 @@
 Use `dbgame`;
 
 SET FOREIGN_KEY_CHECKS = 0;    
-TRUNCATE TABLE finishedgame;
+TRUNCATE TABLE finished_game;
 TRUNCATE TABLE game;
-TRUNCATE TABLE gametype;
-TRUNCATE TABLE hasstatsfor;
-TRUNCATE TABLE ongoinggame;
+TRUNCATE TABLE game_type;
+TRUNCATE TABLE has_stats_for;
+TRUNCATE TABLE ongoing_game;
 TRUNCATE TABLE plays;
-TRUNCATE TABLE unstartedgame;
-TRUNCATE TABLE users;
+TRUNCATE TABLE unstarted_game;
+TRUNCATE TABLE user;
 SET FOREIGN_KEY_CHECKS = 1;
 
 -- You can also use "DROP SCHEMA `dbgame`" to delete the entire database.
