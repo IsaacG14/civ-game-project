@@ -31,7 +31,7 @@ INSERT INTO Game_Type (type_name, max_players, min_players) VALUES
 -- 3. Scenario 1: A Finished Tic-Tac-Toe Game (Game 1)
 
 -- First, create the main entry in the `Game` table.
-INSERT INTO Game (game_id, type_name, name, creation_date, start_date, status)
+INSERT INTO Game (game_id, type_name, `name`, creation_date, start_date, `status`)
 VALUES (1, 'TicTacToe', 'Classic TTT Match', '2025-11-10 09:00:00', '2025-11-10 09:01:00', 'Finished');
 
 -- Now, add the specific 'FinishedGame' details.
@@ -49,7 +49,7 @@ VALUES
 -- 4. Scenario 2: An Ongoing Checkers Game (Game 2)
 
 -- Create the main `Game` entry.
-INSERT INTO Game (game_id, type_name, name, creation_date, start_date, status)
+INSERT INTO Game (game_id, type_name, `name`, creation_date, start_date, `status`)
 VALUES (2, 'Checkers', 'Intense Checkers', '2025-11-11 10:00:00', '2025-11-11 10:01:00', 'Ongoing');
 
 -- Add the 'OngoingGame' details, including a sample JSON game state.
@@ -66,7 +66,7 @@ VALUES
 -- 5. Scenario 3: An Unstarted Public Uno Game (Game 3)
 
 -- Create the main `Game` entry.
-INSERT INTO Game (game_id, type_name, name, creation_date, status)
+INSERT INTO Game (game_id, type_name, `name`, creation_date, `status`)
 VALUES (3, 'Uno', 'Public Uno Lobby - Join!', '2025-11-11 12:00:00', 'Unstarted');
 
 -- Add the 'UnstartedGame' details.
@@ -81,7 +81,7 @@ VALUES (1, 3);
 -- 6. Scenario 4: An Unstarted Private TTT Game (Game 4)
 
 -- Create the main `Game` entry.
-INSERT INTO Game (game_id, type_name, name, creation_date, status)
+INSERT INTO Game (game_id, type_name, `name`, creation_date, `status`)
 VALUES (4, 'TicTacToe', 'Charlies Private Game', '2025-11-11 12:30:00', 'Unstarted');
 
 -- Add the 'UnstartedGame' details.
@@ -94,7 +94,7 @@ VALUES (3, 4);
 
 -- -----------------------------------------------------------
 -- 7. Scenario 5: Finished Blackjack Game (Game 5)
-INSERT INTO Game (game_id, type_name, name, creation_date, start_date, status)
+INSERT INTO Game (game_id, type_name, `name`, creation_date, start_date, `status`)
 VALUES (5, 'Blackjack', 'Lucky Blackjack Table', '2025-11-09 21:00:00', '2025-11-09 21:05:00', 'Finished');
 
 INSERT INTO Finished_Game (game_id, finish_date, ended_early, results)
@@ -107,7 +107,7 @@ INSERT INTO Plays (user_id, game_id, resigned, score, `rank`) VALUES
 
 -- -----------------------------------------------------------
 -- 8. Scenario 6: Ongoing RoShamBo Game (Game 6)
-INSERT INTO Game (game_id, type_name, name, creation_date, start_date, status)
+INSERT INTO Game (game_id, type_name, `name`, creation_date, start_date, `status`)
 VALUES (6, 'RoShamBo', 'Best of 5 Battle', '2025-11-11 09:00:00', '2025-11-11 09:02:00', 'Ongoing');
 
 INSERT INTO Ongoing_Game (game_id, state, turn_end_date)
@@ -120,7 +120,7 @@ VALUES
 
 -- -----------------------------------------------------------
 -- 9. Scenario 7: Unstarted War Game (Game 7)
-INSERT INTO Game (game_id, type_name, name, creation_date, status)
+INSERT INTO Game (game_id, type_name, `name`, creation_date, `status`)
 VALUES (7, 'War', 'Weekend War', '2025-11-08 10:00:00', 'Unstarted');
 
 INSERT INTO Unstarted_Game (game_id, invite_code, is_public)
@@ -135,7 +135,7 @@ INSERT INTO Plays (user_id, game_id) VALUES
 
 -- -----------------------------------------------------------
 -- 10. Scenario 8: Finished Checkers Game (Game 8)
-INSERT INTO Game (game_id, type_name, name, creation_date, start_date, status)
+INSERT INTO Game (game_id, type_name, `name`, creation_date, start_date, `status`)
 VALUES (8, 'Checkers', 'Bob vs David', '2025-11-05 13:00:00', '2025-11-05 13:02:00', 'Finished');
 
 INSERT INTO Finished_Game (game_id, finish_date, ended_early, results)
@@ -147,7 +147,7 @@ INSERT INTO Plays (user_id, game_id, resigned, score, `rank`) VALUES
 
 -- -----------------------------------------------------------
 -- 11. Scenario 9: Ongoing Uno Game (Game 9)
-INSERT INTO Game (game_id, type_name, name, creation_date, start_date, status)
+INSERT INTO Game (game_id, type_name, `name`, creation_date, start_date, `status`)
 VALUES (9, 'Uno', 'Family Uno Night', '2025-11-10 19:00:00', '2025-11-10 19:02:00', 'Ongoing');
 
 INSERT INTO Ongoing_Game (game_id, state, turn_end_date)
@@ -162,7 +162,7 @@ VALUES
 
 -- -----------------------------------------------------------
 -- 12. Scenario 10: Unstarted Checkers Game (Game 10)
-INSERT INTO Game (game_id, type_name, name, creation_date, status)
+INSERT INTO Game (game_id, type_name, `name`, creation_date, `status`)
 VALUES (10, 'Checkers', 'David’s Private Match', '2025-11-12 08:00:00', 'Unstarted');
 
 INSERT INTO Unstarted_Game (game_id, invite_code, is_public)
@@ -173,7 +173,7 @@ VALUES (5, 10);
 
 -- -----------------------------------------------------------
 -- 12. Scenario 11: Finished TicTacToe Game (Game 11)
-INSERT INTO Game (game_id, type_name, name, creation_date, start_date, status)
+INSERT INTO Game (game_id, type_name, `name`, creation_date, start_date, `status`)
 VALUES (11, 'TicTacToe', 'Bob vs Willy', '2025-11-09 14:00:00', '2025-11-09 14:01:00', 'Finished');
 
 INSERT INTO Finished_Game (game_id, finish_date, ended_early, results)
@@ -186,7 +186,7 @@ VALUES
 
 -- -----------------------------------------------------------
 -- 13. Scenario 12: Ongoing War Game (Game 12)
-INSERT INTO Game (game_id, type_name, name, creation_date, start_date, status)
+INSERT INTO Game (game_id, type_name, `name`, creation_date, start_date, `status`)
 VALUES (12, 'War', 'Massive War', '2025-11-10 10:00:00', '2025-11-10 10:10:00', 'Ongoing');
 
 INSERT INTO Ongoing_Game (game_id, state, turn_end_date)
@@ -201,7 +201,7 @@ VALUES
 
 -- -----------------------------------------------------------
 -- 14. Scenario 13: Finished RoShamBo Game (Game 13)
-INSERT INTO Game (game_id, type_name, name, creation_date, start_date, status)
+INSERT INTO Game (game_id, type_name, `name`, creation_date, start_date, `status`)
 VALUES (13, 'RoShamBo', 'Final Clash', '2025-11-08 18:00:00', '2025-11-08 18:01:00', 'Finished');
 
 INSERT INTO Finished_Game (game_id, finish_date, ended_early, results)
@@ -214,7 +214,7 @@ VALUES
 
 -- -----------------------------------------------------------
 -- 14. Scenario 13: Finished Blackjack Game (Game 14)
-INSERT INTO Game (game_id, type_name, name, creation_date, start_date, status)
+INSERT INTO Game (game_id, type_name, `name`, creation_date, start_date, `status`)
 VALUES (14, 'Blackjack', 'High Stakes Table', '2025-11-11 21:00:00', '2025-11-11 21:05:00', 'Finished');
 
 INSERT INTO Finished_Game (game_id, finish_date, ended_early, results)
@@ -227,7 +227,7 @@ INSERT INTO Plays (user_id, game_id, resigned, score, `rank`) VALUES
 
 -- -----------------------------------------------------------
 -- 15. Scenario 14: Finished Blackjack Game (Game 15)
-INSERT INTO Game (game_id, type_name, name, creation_date, start_date, status)
+INSERT INTO Game (game_id, type_name, `name`, creation_date, start_date, `status`)
 VALUES (15, 'Blackjack', 'Midweek Blackjack Clash', '2025-11-12 20:00:00', '2025-11-12 20:05:00', 'Ongoing');
 
 INSERT INTO Ongoing_Game (game_id, state, turn_end_date)
@@ -240,7 +240,7 @@ VALUES
 
 -- -----------------------------------------------------------
 -- 16. Scenario 15: Finished Blackjack Game (Game 16)
-INSERT INTO Game (game_id, type_name, name, creation_date, status)
+INSERT INTO Game (game_id, type_name, `name`, creation_date, `status`)
 VALUES (16, 'Uno', 'Casual Uno Lobby', '2025-11-13 09:00:00', 'Unstarted');
 
 INSERT INTO Unstarted_Game (game_id, invite_code, is_public)
