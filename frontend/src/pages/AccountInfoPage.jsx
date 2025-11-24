@@ -3,13 +3,14 @@ import { useEffect, useState } from "react";
 
 import Navbar from "../components/Navbar"
 
-const dummyData = [["1", "Admin", "admin@email.com", 100, 0]];
-
 export default function Account() {
   const navigate = useNavigate();
   const [username, setUsername] = useState(null);
   const [userID, setUserID] = useState(null);
   const [email, setEmail] = useState(null);
+  const [totalWins, setTotalWins] = useState(0);
+  const [totalLosses, setTotalLosses] = useState(0);
+  const [totalWinrate, setTotalWinrate] = useState(0);
 
   const [showEmailInput, setShowEmailInput] = useState(false);
   const [newEmail, setNewEmail] = useState(""); 
@@ -39,9 +40,26 @@ export default function Account() {
         setUsername(data.username);
         setUserID(data.user_id);
         setEmail(data.email);
-      })
-
-  }, [])
+      return fetch("http://localhost:5000/api/account/total_stats", {
+      headers: { Authorization: "Bearer " + token },
+    });
+  })
+  .then(res => {
+    if (!res.ok) {
+      throw new Error("Failed to fetch stats");
+    }
+    return res.json();
+  })
+  .then(statsData => {
+    const row = statsData[0]; // important: statsData is an array
+    setTotalWins(row.total_wins ?? 0);
+    setTotalLosses(row.total_losses ?? 0);
+    setTotalWinrate(row.total_winrate ?? 0);
+  })
+  .catch(err => {
+    console.error("Error fetching account info:", err);
+  });
+}, []);
 
   function logout() {
     localStorage.removeItem("token");
@@ -140,13 +158,13 @@ export default function Account() {
                   clickButton2Text = "Leaderboard"
                   onLogoutClick = {logout}
                 />
-      {dummyData.map((entry, index) => (
-      <div key={index} className = "accountColumn">
+      <div className = "accountColumn">
           <div className = "userID">UserID: {userID}</div>
           <div className = "accountStat">User Name: {username}</div>
           <div className = "accountStat">Email: {email}</div>
-          <div className = "accountStat">Wins: {entry[3]}</div>
-          <div className = "accountStat">Losses: {entry[4]}</div>
+          <div className = "accountStat">Total Wins: {totalWins}</div>
+          <div className = "accountStat">Total Losses: {totalLosses}</div>
+          <div className = "accountStat">Winrate: {totalWinrate}%</div>
 
           {showEmailInput && (
             <form onSubmit={(e) => handleChangeEmail(e, userID)}>
@@ -177,20 +195,19 @@ export default function Account() {
 
           <div className = "buttonRow">
             <button className = "changeEmail" 
-              onClick={() => handleShowEmail(entry[0])}>
+              onClick={() => handleShowEmail(userID)}>
               Change Email
             </button>
             <button className = "changePassword"
-              onClick={() => handleShowPassword(entry[0])}>
+              onClick={() => handleShowPassword(userID)}>
                 Change Password
             </button>
             <button className = "deleteButton"
-              onClick={() => handleDeleteAccount(entry[0])}>
+              onClick={() => handleDeleteAccount(userID)}>
                 Delete Account
             </button>
           </div>
       </div>
-      ))}
     </div>
   );
 }

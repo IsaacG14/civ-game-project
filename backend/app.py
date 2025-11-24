@@ -205,6 +205,27 @@ def get_leaderboard(type_name):
     except Exception as e:
         print("error -- ", {"error": str(e)})
         return jsonify({"error": str(e)}), 500
+    
+@app.route("/api/account/total_stats", methods=["GET"])
+@require_jwt
+def get_stats():
+    user_id = request.user_id
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT SUM(wins) AS total_wins, SUM(losses) AS total_losses, 
+                       ROUND(SUM(wins) * 1.0/ (SUM(wins) + SUM(losses)) * 100, 2) AS total_winrate
+            FROM has_stats_for
+            WHERE user_id = %s;
+            """, (user_id,))
+        rows = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return jsonify(rows)
+    except Exception as e:
+        print("error -- ", {"error": str(e)})
+        return jsonify({"error": str(e)}), 500
 
 
 def get_db_connection():
