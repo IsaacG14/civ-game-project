@@ -3,7 +3,7 @@ type Props = {
     label: string,
     value: string, 
     setValue: (value: string) => void,
-    isPassword: boolean,
+    isPassword?: boolean,
     onEnterPress: (e: any) => void,
 }
 

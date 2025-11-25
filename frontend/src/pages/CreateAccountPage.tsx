@@ -2,22 +2,23 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import TextInput from "../components/TextInput";
+import ErrorBox from "../components/ErrorBox";
 
 export default function CreateAccountPage() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string|null>(null);
   const navigate = useNavigate();
 
-  const handleSignup = (e) => {
+  const handleSignup = (e:any) => {
     if (password !== confirmPassword) {
       setError("Passwords do not match!");
       return; 
     }
 
-    setError("");
+    setError(null);
     
     fetch("http://localhost:5000/sign_up", {
       method: "POST",
@@ -25,12 +26,16 @@ export default function CreateAccountPage() {
       body: JSON.stringify({ username: username, email: email, password: password })
     })
       .then(res => res.json().then(data => {
-        setError(res.ok ? "" : data.error);
-        if (res.ok) navigate("/");
-    }))
+        if (res.ok) {
+          navigate("/");
+        }
+        else {
+          setError(data.error);
+        }
+    }));
   };
 
-  const backToLogin = (e) => {
+  const backToLogin = (e:any) => {
     navigate("/");
   };
 
@@ -44,7 +49,7 @@ export default function CreateAccountPage() {
         <TextInput id="password"   label="Password"         value={password}        setValue={setPassword}        onEnterPress={handleSignup} isPassword />
         <TextInput id="confirmpas" label="Confirm Password" value={confirmPassword} setValue={setConfirmPassword} onEnterPress={handleSignup} isPassword />
 
-        {error && <p className="cuprum-600" style={{ color: "red" }}>{error}</p>}
+        <ErrorBox message={error} setMessage={setError} />
 
         <button type="button" className="formSubmitButton cuprum-600" onClick={handleSignup}>Create Account</button>
 

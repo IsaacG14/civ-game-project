@@ -118,6 +118,12 @@ label {
     text-align: left;
 }
 
+.error-box {
+    background-color: hsla(0, 80%, 30%, 50%);
+    border: hsla(0, 80%, 30%, 100%) solid 2px;
+    border-radius: 8px;
+}
+
 
 
 /* All Hub Styles */
