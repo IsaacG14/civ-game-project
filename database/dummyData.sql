@@ -265,4 +265,20 @@ VALUES
 (2, 'TicTacToe', 0, 1), -- Bob's loss from Game 1
 (2, 'Checkers', 10, 3),   -- Bob is a good Checkers player
 (3, 'Checkers', 8, 8),   -- Charlie is average at Checkers
-(4, 'RoShamBo', 1, 0);   -- Willy played 1 game of RoShamBo
+(4, 'RoShamBo', 1, 0),   -- Willy played 1 game of RoShamBo
+(3, 'TicTacToe', 1, 1),
+(4, 'TicTacToe', 1, 1),
+(4, 'Checkers', 0, 7),
+(5, 'Uno', 10, 1),
+(3, 'Uno', 8, 2),
+(1, 'War', 1, 2),
+(2, 'War', 2, 4),
+(3, 'War', 4, 0),  
+(4, 'Blackjack', 5, 6),  
+(5, 'Blackjack', 3, 1),  
+(1, 'Blackjack', 2, 9),  
+(2, 'Blackjack', 0, 2),  
+(1, 'RoShamBo', 17, 13),  
+(2, 'RoShamBo', 10, 14),  
+(3, 'RoShamBo', 3, 9),  
+(5, 'RoShamBo', 10, 10);
