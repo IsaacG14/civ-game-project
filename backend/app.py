@@ -218,7 +218,7 @@ def get_leaderboard(type_name):
             SELECT username, wins, losses
             FROM User u
             JOIN Has_Stats_For h ON u.user_id = h.user_id
-            WHERE h.type_name = %s
+            WHERE h.type_name = %s AND u.is_deleted IS FALSE
             ORDER BY h.wins DESC, h.losses ASC;
             """, (type_name,))
         rows = cursor.fetchall()
