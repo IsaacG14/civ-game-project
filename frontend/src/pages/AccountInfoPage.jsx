@@ -11,6 +11,7 @@ export default function Account() {
   const [totalWins, setTotalWins] = useState(0);
   const [totalLosses, setTotalLosses] = useState(0);
   const [totalWinrate, setTotalWinrate] = useState(0);
+  const [gameStats, setGameStats] = useState([]);
 
   const [showEmailInput, setShowEmailInput] = useState(false);
   const [newEmail, setNewEmail] = useState(""); 
@@ -55,6 +56,13 @@ export default function Account() {
     setTotalWins(row.total_wins ?? 0);
     setTotalLosses(row.total_losses ?? 0);
     setTotalWinrate(row.total_winrate ?? 0);
+    return fetch("http://localhost:5000/api/account/game_stats", {
+      headers: { Authorization: "Bearer " + token },
+    });
+  })
+  .then(res => res.json())
+  .then(gameStatsData => {
+    setGameStats(gameStatsData);
   })
   .catch(err => {
     console.error("Error fetching account info:", err);
@@ -165,6 +173,15 @@ export default function Account() {
           <div className = "accountStat">Total Wins: {totalWins}</div>
           <div className = "accountStat">Total Losses: {totalLosses}</div>
           <div className = "accountStat">Winrate: {totalWinrate}%</div>
+          <div className = "accountStat"></div>
+          <div className = "accountStat" style = {{fontWeight: "bold"}}>Specific Game Stats</div>
+          {gameStats.length === 0 && <div className = "accountStat">No game stats available.</div>}
+          {gameStats.map((game, index) => (
+            <div key = {index} className = "accountStat">
+              <strong>{game.type_name}</strong>: Wins: {game.wins}, Losses: {game.losses}, Winrate: {game.winrate ?? 0}%
+            </div>
+          ))}
+
 
           {showEmailInput && (
             <form onSubmit={(e) => handleChangeEmail(e, userID)}>

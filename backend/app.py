@@ -227,6 +227,27 @@ def get_stats():
         print("error -- ", {"error": str(e)})
         return jsonify({"error": str(e)}), 500
 
+@app.route("/api/account/game_stats", methods=["GET"])
+@require_jwt
+def get_specific_stats():
+    user_id = request.user_id
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT type_name, wins, losses,
+                       ROUND(wins * 1.0/ (wins + losses) * 100, 2) AS winrate
+            FROM has_stats_for
+            WHERE user_id = %s;
+            """, (user_id,))
+        rows = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return jsonify(rows)
+    except Exception as e:
+        print("error -- ", {"error": str(e)})
+        return jsonify({"error": str(e)}), 500
+
 
 def get_db_connection():
     # Mysql information (change to match your database)
