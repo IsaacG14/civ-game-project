@@ -239,7 +239,7 @@ VALUES
 (3, 15); -- Charlie
 
 -- -----------------------------------------------------------
--- 16. Scenario 15: Finished Blackjack Game (Game 16)
+-- 16. Scenario 15: Unfinished Uno Game (Game 16)
 INSERT INTO Game (game_id, type_name, `name`, creation_date, `status`)
 VALUES (16, 'Uno', 'Casual Uno Lobby', '2025-11-13 09:00:00', 'Unstarted');
 
@@ -251,8 +251,8 @@ VALUES
 (1, 16), -- Alice (host)
 (2, 16), -- Bob
 (3, 16), -- Charlie
-(4, 16), -- Willy
-(5, 16); -- David
+(4, 16); -- Willy
+
 
 -- -----------------------------------------------------------
 -- 17. Populate HasStatsFor (Leaderboard Stats)

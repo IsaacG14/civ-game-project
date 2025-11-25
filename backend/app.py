@@ -173,10 +173,15 @@ def get_joinable_games():
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
         cursor.execute("""
-            SELECT G.game_id, G.type_name, G.name, G.creation_date, G.status, U.invite_code, U.is_public
-            FROM game as G, unstarted_game as U
-            WHERE G.game_id = U.game_id 
-            AND U.is_public = 1;
+            SELECT G.game_id, G.type_name, G.name, G.creation_date, G.status, U.invite_code, U.is_public, COUNT(P.user_id) AS current_players
+            FROM game as G
+            JOIN unstarted_game as U on G.game_id = U.game_id
+            JOIN game_type as T on G.type_name = T.type_name
+            LEFT JOIN plays as P on P.game_id = g.game_id
+            WHERE U.is_public = 1
+            GROUP BY G.game_id, G.type_name, G.name, G.creation_date, G.status, 
+                U.invite_code, U.is_public, T.max_players
+            HAVING COUNT(P.user_id) < T.max_players;    
             """)
         rows = cursor.fetchall()
         cursor.close()
