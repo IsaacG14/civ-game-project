@@ -100,7 +100,7 @@ export default function Hub() {
   }
 
   return (
-    <div className ="fullScreen" style = {{ backgroundColor: "#692a00ff", flexDirection: "column"}}>
+    <div className ="fullScreen bg-gradient" style = {{ flexDirection: "column" }}>
       <Navbar 
         onClickButton = {accountInfo}
         clickButtonText= "Account"
@@ -114,8 +114,8 @@ export default function Hub() {
             <h2 className = "formHeader">Current Games</h2>
             <p>No Current Games</p>
           </div>
-          <button className = "hubButton"
-            onMouseEnter = {e=> e.currentTarget.style.backgroundColor = "#050f96ff"}  
+          <button className="hubButton"
+            onMouseEnter={e => e.currentTarget.style.backgroundColor = "#050f96ff"}  
             onMouseLeave={e => e.currentTarget.style.backgroundColor = ""}>
               Create Game</button>
         </div>
@@ -123,9 +123,9 @@ export default function Hub() {
         <div className = "hubColumn">
           <div className = "hubBox">
             <h2 className = "formHeader">Joinable Games</h2>
-            <div>{joinableGames.map(game => (<p key={game.gameID}>{
-              "Name: " + game.name} <br/> {"Type: " + game.typeName} <br/> {"Creation Date: " + game.creationDate
-            }</p>))}</div>
+            <div>{joinableGames.map(game => (<p key={game.gameID}>
+              {"Name: " + game.name} <br/> {"Type: " + game.type_name} <br/> {"Created: " + game.creation_date}
+            </p>))}</div>
           </div>
           <button className = "hubButton"
             onMouseEnter = {e=> e.currentTarget.style.backgroundColor = "#050f96ff"}  

@@ -2,12 +2,13 @@ import React, { useState, useEffect} from "react";
 import { useNavigate } from "react-router-dom"
 
 import TextInput from "../components/TextInput";
+import ErrorBox from "../components/ErrorBox";
 
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState<null|string>(null);
   const navigate = useNavigate();
 
 
@@ -34,11 +35,8 @@ export default function LoginPage() {
 
 
   // On login button click send credentials to backend. On succesful login a token will be stored in local storage to allow users to go to hub.
-  const handleLogin = (e) => {
-    // Prevents page reloading on button click [only if the button type is "submit"]
-    // e.preventDefault();
-
-    console.log("Login attempt:", username, password);
+  const handleLogin = (e:any) => {
+    setError(null);
     
     // Send username and password to backend for check
     fetch("http://localhost:5000/log_in", {
@@ -73,14 +71,14 @@ export default function LoginPage() {
 
 
   return (
-    <div className="fullScreen">
+    <div className="fullScreen bg-gradient">
       <form className="formContainer"> {/* this is a form instead of a div just so the password field doesn't complain */}
         
         <h1 className="russo">LOG IN</h1>
-        <TextInput id="username" label="Username" value={username} setValue={setUsername} />
-        <TextInput id="password" label="Password" value={password} setValue={setPassword} isPassword />
+        <TextInput id="username" label="Username" value={username} setValue={setUsername} onEnterPress={handleLogin}/>
+        <TextInput id="password" label="Password" value={password} setValue={setPassword} onEnterPress={handleLogin} isPassword />
 
-        {error && <p className="cuprum-600" style={{ color: "red" }}>{error}</p>}
+        <ErrorBox message={error} setMessage={setError} />
 
         <button type="button" className="formSubmitButton cuprum-600" onClick={handleLogin}>Log In</button>
         

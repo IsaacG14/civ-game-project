@@ -1,19 +1,26 @@
 * {
-    --primary: #963512;
-    --secondary: #f7ba13;
+    --primary: #692a00;
+    --secondary: #e7ae10;
+    --text-light: rgb(217, 217, 217);
+    --text-dark: rgb(34, 34, 34);
+
+    font-family: "Cuprum", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600; /* any weight available */
+    font-style: normal;
 }
 
 .cuprum-600 {
-  font-family: "Cuprum", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 600; /* any weight available */
-  font-style: normal;
+    font-family: "Cuprum", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600; /* any weight available */
+    font-style: normal;
 }
 
 .russo {
-  font-family: "Russo One", sans-serif;
-  font-weight: 400; /* only weight 400 is available */
-  font-style: normal;
+    font-family: "Russo One", sans-serif;
+    font-weight: 400; /* only weight 400 is available */
+    font-style: normal;
 }
 
 body {
@@ -27,7 +34,7 @@ body {
 
 a {
     cursor: pointer;
-    color: #2870db;
+    color: var(--secondary); /* #2870db */
 }
 a:hover {
     text-decoration: underline;
@@ -36,13 +43,89 @@ a:hover {
 button {
     font-size: 0.875em;
     background-color: var(--secondary);
-    color: white;
+    color: var(--text-dark);
     padding: 10px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     font-weight: bold;
 }
+
+.bg-gradient {
+    background: lch(16.0% 14.0 18.0);
+    background: linear-gradient(
+        0deg,
+        lch(16.0% 14.0 18.0) 0%, 
+        lch(24.0% 29.0 33.3) 15%, 
+        lch(25.0% 37.0 44.5) 30%,
+        lch(26.0% 41.0 52.7) 50%, 
+        lch(25.0% 37.0 44.5) 70%,
+        lch(24.0% 29.0 33.3) 85%, 
+        lch(16.0% 14.0 18.0) 100%
+    );
+}
+
+
+/* Login Form Styles */
+.fullScreen {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    height: 100vh; 
+    background-color: var(--primary);
+    text-align: center;
+}
+
+.formContainer {
+    background-color: rgba(0, 0, 0, 40%);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: inset 0 5px 5px rgba(0, 0, 0, 20%);
+    width: 300px;
+
+    color: var(--text-light);
+
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+}
+
+.formSubmitButton {
+    background-color: var(--secondary);
+    color: var(--text-dark);
+}
+
+.formTextInput {
+    display: flex;
+    flex-direction: column;
+}
+.formTextInput > label {
+    font-size: 0.875em;
+    color: var(--text-light);
+    width: fit-content;
+}
+.formTextInput > input {
+    font-size: 0.875em;
+    padding: 10px;
+    border-radius: 8px;
+    border: 0px;
+    background-color: var(--text-light);
+}
+
+label {
+    display: block;
+    color: black;
+    text-align: left;
+}
+
+.error-box {
+    background-color: hsla(0, 80%, 30%, 50%);
+    border: hsla(0, 80%, 30%, 100%) solid 2px;
+    border-radius: 8px;
+}
+
+
+
 /* All Hub Styles */
 .hubContent {
     display: flex;
@@ -70,6 +153,26 @@ button {
     overflow-y: auto;
     text-align: center;
 }
+
+.hubButton {
+    width: 250px;
+    background-color: var(--secondary);
+    color: white;
+    padding: 10px;
+    border: 3px solid white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 20px;
+    transition: background-color 0.2s; 
+}
+
+.hubButton:hover {
+    background-color: var(--submit-color);
+    color:white;
+}
+
+
 /*All Leaderboard Styles*/
 .leaderboardColumn {
     position: fixed;
@@ -107,6 +210,8 @@ button {
     text-align: center;
     font-size: 32px;
 }
+
+
 /*All Account Info Styles*/
 .accountColumn {
     display: flex;
