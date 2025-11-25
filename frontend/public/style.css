@@ -43,7 +43,7 @@ a:hover {
 button {
     font-size: 0.875em;
     background-color: var(--secondary);
-    color: white;
+    color: var(--text-dark);
     padding: 10px;
     border: none;
     border-radius: 8px;
@@ -92,7 +92,7 @@ button {
 
 .formSubmitButton {
     background-color: var(--secondary);
-    color: var(--text-light);
+    color: var(--text-dark);
 }
 
 .formTextInput {
