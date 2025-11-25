@@ -2,14 +2,15 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import Navbar from "../components/Navbar"
+import ErrorBox from "../components/ErrorBox";
 
 const dummyData = [["1", "Admin", "admin@email.com", 100, 0]];
 
 export default function Account() {
   const navigate = useNavigate();
-  const [username, setUsername] = useState(null);
-  const [userID, setUserID] = useState(null);
-  const [email, setEmail] = useState(null);
+  const [username, setUsername] = useState<string|null>(null);
+  const [userID, setUserID] = useState<string|null>(null);
+  const [email, setEmail] = useState<string|null>(null);
 
   const [showEmailInput, setShowEmailInput] = useState(false);
   const [newEmail, setNewEmail] = useState(""); 
@@ -17,7 +18,7 @@ export default function Account() {
   const[showPasswordInput, setShowPasswordInput] = useState(false);
   const [newPassword, setNewPassword] = useState(""); 
 
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string|null>(null);
 
   const token = localStorage.getItem("token");
 
@@ -28,79 +29,98 @@ export default function Account() {
       },
     })
     .then(res => {
-        if (!res.ok) {
-          navigate("/hub");
-          throw new Error("Unauthorized");
-        }
-        return res.json();
-      })
-      // If response is valid, display data from backend and finish loading.
-      .then(data => {
-        setUsername(data.username);
-        setUserID(data.user_id);
-        setEmail(data.email);
-      })
+      if (!res.ok) {
+        navigate("/hub");
+        throw new Error("Unauthorized");
+      }
+      return res.json();
+    })
+    // If response is valid, display data from backend and finish loading.
+    .then(data => {
+      setUsername(data.username);
+      setUserID(data.user_id);
+      setEmail(data.email);
+    });
 
   }, [])
 
   function logout() {
     localStorage.removeItem("token");
     navigate("/login");
-    }
+  
+  }
   function leaderboard() {
     navigate("/leaderboard");
-    }
+  }
+
   function hub() {
     navigate("/hub");
-    }
-  function handleChangeEmail(e, userID) {
-    event.preventDefault(); // prevents page reload
+  }
+
+  function handleChangeEmail(e:any) {
+    if (e) e.preventDefault(); // prevents page reload
+
+    setError(null);
 
     fetch("http://localhost:5000/change_email", {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + localStorage.getItem("token"),
-    },
-    body: JSON.stringify({ email: newEmail }),
-  })
-    .then(res => res.json().then(data => {
-      if (!res.ok){
-        if (res.status === 401){
-            localStorage.removeItem("token")
-            navigate("/hub")
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + localStorage.getItem("token"),
+      },
+      body: JSON.stringify({ email: newEmail }),
+    })
+    .then(async res => {
+      const data = await res.json();
+      return [res, data];
+    })
+    .then(([res, data]) => {
+      if (!res.ok) {
+        if (res.status === 401) {
+          localStorage.removeItem("token");
+          navigate("/hub");
         }
-        else {setError("Email already taken")}
+        else {
+          setError("Email already taken");
+        }
       }
-      else{
-        navigate(0)
+      else {
+        navigate(0);
       }
-    }))
+    });
   }
   
-  function handleChangePassword(userID) {
-     event.preventDefault();
+  function handleChangePassword(e:any) {
+    if (e) e.preventDefault();
+
+    setError(null);
 
     fetch("http://localhost:5000/change_password", {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + localStorage.getItem("token"),
-    },
-    body: JSON.stringify({ password: newPassword }),
-  })
-    .then(res => res.json().then(data => {
-      if (!res.ok){
-        if (res.status === 401){
-            localStorage.removeItem("token")
-            navigate("/hub")
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + localStorage.getItem("token"),
+      },
+      body: JSON.stringify({ password: newPassword }),
+    })
+    .then(async res => {
+      const data = await res.json();
+      return [res, data];
+    })
+    .then(([res, data]) => {
+      if (!res.ok) {
+        if (res.status === 401) {
+          localStorage.removeItem("token");
+          navigate("/hub");
         }
-        else {setError(data.error)}
+        else {
+          setError(data.error);
+        }
       }
-      else{
-        navigate(0)
+      else {
+        navigate(0);
       }
-    }))
+    });
   }
 
   function handleShowEmail(){
@@ -112,22 +132,23 @@ export default function Account() {
     setShowPasswordInput(true)
   }
 
-  function handleDeleteAccount(userID) {
-    console.log("Delete account was clicked by: ", userID);
+  function handleDeleteAccount(e:any) {
+    setError(null);
 
-     fetch("http://localhost:5000/delete_account", {
-    method: "DELETE",
-    headers: {
-      Authorization: "Bearer " + localStorage.getItem("token"),
-    }})
+    fetch("http://localhost:5000/delete_account", {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      }
+    })
     .then(res => {
-        if (!res.ok) {
-          throw new Error("Unauthorized");
-        }
-        localStorage.removeItem("token");
-        navigate("/hub");
-        return res.json();
-      })
+      if (!res.ok) {
+        throw new Error("Unauthorized");
+      }
+      localStorage.removeItem("token");
+      navigate("/hub");
+      return res.json();
+    });
   }
 
 
@@ -149,7 +170,7 @@ export default function Account() {
           <div className = "accountStat">Losses: {entry[4]}</div>
 
           {showEmailInput && (
-            <form onSubmit={(e) => handleChangeEmail(e, userID)}>
+            <form onSubmit={handleChangeEmail}>
               <input
                 type="email"
                 name = "email"
@@ -162,7 +183,7 @@ export default function Account() {
           )}
 
           {showPasswordInput && (
-            <form onSubmit={(e) => handleChangePassword(e, userID)}>
+            <form onSubmit={handleChangePassword}>
               <input
                 type="text"
                 placeholder="Enter new password"
@@ -173,19 +194,19 @@ export default function Account() {
             </form>
           )}
           
-          {error && <p className="cuprum-600" style={{ color: "red" }}>{error}</p>}
+          <ErrorBox message={error} setMessage={setError} />
 
           <div className = "buttonRow">
             <button className = "changeEmail" 
-              onClick={() => handleShowEmail(entry[0])}>
+              onClick={() => handleShowEmail()}>
               Change Email
             </button>
             <button className = "changePassword"
-              onClick={() => handleShowPassword(entry[0])}>
+              onClick={() => handleShowPassword()}>
                 Change Password
             </button>
             <button className = "deleteButton"
-              onClick={() => handleDeleteAccount(entry[0])}>
+              onClick={handleDeleteAccount}>
                 Delete Account
             </button>
           </div>
