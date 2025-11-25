@@ -185,6 +185,29 @@ def get_joinable_games():
     except Exception as e:
         print("error -- ", {"error": str(e)})
         return jsonify({"error": str(e)}), 500
+    
+@app.route("/api/current-games")
+@require_jwt
+def get_current_games():
+    try:
+        user_id = request.user_id
+        
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT g.game_id, g.name, g.type_name, g.creation_date
+            FROM Plays p
+            JOIN User u ON p.user_id = u.user_id
+            JOIN Game g ON p.game_id = g.game_id
+            WHERE g.status = 'Ongoing' AND p.user_id = %s;
+            """, (user_id,))
+        rows = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return jsonify(rows)
+    except Exception as e:
+        print("error -- ", {"error": str(e)})
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/api/leaderboard/<type_name>")
 def get_leaderboard(type_name):

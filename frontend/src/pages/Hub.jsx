@@ -19,6 +19,8 @@ export default function Hub() {
 
   const [joinableGames, setJoinableGames] = useState([]);
 
+  const [currentGames, setCurrentGames] = useState([]);
+
   // When page loads, check for token validity. If invalid token send user to login page.
   useEffect(() => {
     // Get token from local storage.
@@ -65,7 +67,18 @@ export default function Hub() {
         console.log(games);
         setJoinableGames(games);
       });
-  
+    fetch("http://localhost:5000/api/current-games", {
+      headers: { Authorization: "Bearer " + token }
+    }) 
+      .then(res => {
+        if (!res.ok) throw new Error("Rejected request");
+        return res.json();
+      })
+      // If there is a valid response navigate to hub.
+      .then(games => {
+        console.log(games);
+        setCurrentGames(games);
+      });
 
 
   }, [navigate]);
@@ -112,7 +125,15 @@ export default function Hub() {
         <div className = "hubColumn">
           <div className = "hubBox">
             <h2 className = "formHeader">Current Games</h2>
-            <p>No Current Games</p>
+            {currentGames.length === 0 ? (
+              <p>No Current Games</p>
+            ) : (
+              currentGames.map(game => (
+                <p key={game.game_id}>
+                  {"Name: " + game.name} <br /> {"Type: " + game.type_name} <br /> {"Created: " + game.creation_date}
+                </p>
+              ))
+            )}
           </div>
           <button className="hubButton"
             onMouseEnter={e => e.currentTarget.style.backgroundColor = "#050f96ff"}  
