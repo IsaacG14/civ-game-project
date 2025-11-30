@@ -1,8 +1,11 @@
 * {
-    --primary:   lch(16% 14 18);
-    --secondary: lch(74% 76 83);
+    --primary:        lch( 7% 15.7 25);
+    --secondary:      lch(74% 76.0 83);
+    --secondary-dark: lch(45% 52.5 83);
     --text-light: rgb(217 217 217);
     --text-dark: rgb(34 34 34);
+
+    --navbar-height: 60px;
 
     font-family: "Cuprum", sans-serif;
     font-optical-sizing: auto;
@@ -34,7 +37,7 @@ body {
 
 a {
     cursor: pointer;
-    color: var(--secondary); /* #2870db */
+    color: var(--secondary);
 }
 a:hover {
     text-decoration: underline;
@@ -52,7 +55,7 @@ button {
 }
 
 .bg-gradient {
-    background: lch(16.0% 14.0 18.0);
+    background: var(--primary);
     background: linear-gradient(
         0deg,
         lch(20.0% 30 30) 0%, 
@@ -174,41 +177,75 @@ label {
 
 
 /*All Leaderboard Styles*/
-.leaderboardColumn {
+.leaderboard-column {
     position: fixed;
-    top: 70px;
+    top: calc(var(--navbar-height) + 10px);
+    bottom: 10px;
+    width: min(700px, calc(100vw - 100px));
+    
     display: flex;
     flex-direction: column;
-    width: 700px;
-    background-color: var(--primary);
-    border-radius: 8px;
-    overflow-y: auto;
-    height: calc(100vh - 60px);
+    padding: 40px;
+
+    background-color: rgb(0 0 0 / 0.4);
+    border-radius: 12px;
+    box-shadow: inset 0 5px 5px rgb(0 0 0 / 0.2);
 }
-.leaderboardRow {
+
+.game-buttons {
+    margin-bottom: 10px;
+}
+.game-buttons > * {
+    margin-right: 5px;
+    padding: 5px 10px;
+    background-color: #ccc;
+    color: #000;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.game-buttons > *.selected {
+    /* choose .selected children of .game-buttons only */
+    background-color: var(--secondary-dark);
+    color: #fff;
+}
+
+#leaderboard-entry-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    overflow-y: auto;
+    border-radius: 5px;
+}
+.leaderboard-row {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     padding: 5px 10px;
     gap: 40px;
-    margin-bottom: 5px;
-    background-color: var(--secondary);
     border-radius: 5px;
+    font-size: 32px;
 }
-.place {
+.leaderboard-row:not(.header) {
+    background-color: var(--secondary);
+}
+.leaderboard-row.header {
+    background-color: var(--secondary-dark);
+    margin-bottom: 5px;
+}
+.leaderboard-row > .place {
     width: 40px;
     font-weight: bold;
-    font-size: 32px;
 }
-.username {
+.leaderboard-row > .username {
     flex: 1;
     text-align: left;
-    font-size: 32px;
 }
-.wins, .losses {
+.leaderboard-row > .wins, 
+.leaderboard-row > .losses {
     width: 50px;
     text-align: center;
-    font-size: 32px;
 }
 
 
@@ -227,10 +264,8 @@ label {
     flex-direction: column;
     gap: 1.5em;
 }
-/*
-*/
 .solid-panel {
-    background-color: hsl(6, 60%, 10%);
+    background-color: var(--primary);
     border-radius: 12px;
     box-shadow: 0 5px 5px rgba(0 0 0 / 0.12);
     color: var(--text-light);
