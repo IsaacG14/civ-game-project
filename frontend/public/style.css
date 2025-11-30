@@ -1,8 +1,8 @@
 * {
-    --primary: #692a00;
-    --secondary: #e7ae10;
-    --text-light: rgb(217, 217, 217);
-    --text-dark: rgb(34, 34, 34);
+    --primary:   lch(16% 14 18);
+    --secondary: lch(74% 76 83);
+    --text-light: rgb(217 217 217);
+    --text-dark: rgb(34 34 34);
 
     font-family: "Cuprum", sans-serif;
     font-optical-sizing: auto;
@@ -26,7 +26,7 @@
 body {
     margin: 0;
     padding: 0;
-    color: rgba(255, 255, 255, 0.87);
+    color: rgb(255 255 255 / 0.87);
     background-color: #000000; 
     font-family: Arial, Helvetica, sans-serif;
     font-size: 18px;
@@ -55,13 +55,13 @@ button {
     background: lch(16.0% 14.0 18.0);
     background: linear-gradient(
         0deg,
-        lch(16.0% 14.0 18.0) 0%, 
-        lch(24.0% 29.0 33.3) 15%, 
-        lch(25.0% 37.0 44.5) 30%,
-        lch(26.0% 41.0 52.7) 50%, 
-        lch(25.0% 37.0 44.5) 70%,
-        lch(24.0% 29.0 33.3) 85%, 
-        lch(16.0% 14.0 18.0) 100%
+        lch(20.0% 30 30) 0%, 
+        lch(20.0% 30 40) 15%, 
+        lch(20.0% 30 48) 30%,
+        lch(20.0% 30 54) 50%, 
+        lch(20.0% 30 48) 70%,
+        lch(20.0% 30 40) 85%, 
+        lch(20.0% 30 30) 100%
     );
 }
 
@@ -77,10 +77,10 @@ button {
 }
 
 .formContainer {
-    background-color: rgba(0, 0, 0, 40%);
+    background-color: rgb(0 0 0 / 0.4);
     padding: 40px;
     border-radius: 12px;
-    box-shadow: inset 0 5px 5px rgba(0, 0, 0, 20%);
+    box-shadow: inset 0 5px 5px rgb(0 0 0 / 0.2);
     width: 300px;
 
     color: var(--text-light);
@@ -119,8 +119,8 @@ label {
 }
 
 .error-box {
-    background-color: hsla(0, 80%, 30%, 50%);
-    border: hsla(0, 80%, 30%, 100%) solid 2px;
+    background-color: hsl(0 80% 20%);
+    border: hsl(0 80% 30%) solid 2px;
     border-radius: 8px;
 }
 
@@ -144,12 +144,12 @@ label {
 }
 
 .hubBox {
-    background-color: rgb(199, 96, 1);
+    background-color: rgb(199 96 1);
     width: 300px;
     height: 650px;
     padding: 30px;
     border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(245, 158, 100, 0.4);
+    box-shadow: 0 4px 10px rgb(245 158 100 / 0.4);
     overflow-y: auto;
     text-align: center;
 }
@@ -212,18 +212,32 @@ label {
 }
 
 
-/*All Account Info Styles*/
+/* All Account Info Styles */
 .accountColumn {
+    position: relative;
+    background-color: transparent;
+    
+    padding: 40px;
+    border-radius: 12px;
+    width: 300px;
+
+    color: var(--text-dark);
+
     display: flex;
     flex-direction: column;
-    width: 500px;
-    background-color: var(--secondary);
-    border-radius: 10px;
+    gap: 1.5em;
+}
+/*
+*/
+.solid-panel {
+    background-color: hsl(6, 60%, 10%);
+    border-radius: 12px;
+    box-shadow: 0 5px 5px rgba(0 0 0 / 0.12);
+    color: var(--text-light);
 }
 .userID {
     flex: 1;
     font-weight: bold;
-    color: black;
     text-align: left;
     margin-top: 30px;
     margin-left: 40px;
@@ -231,13 +245,12 @@ label {
 .accountStat {
     flex: 2;
     font-weight: normal;
-    color: black;
     text-align: left;
     margin-left: 40px;
 }
 .changeEmail {
     font-size: 0.875em;
-    background-color: rgb(0, 26, 255);
+    background-color: rgb(0 26 255);
     color: white;
     padding: 10px;
     border: none;
@@ -247,7 +260,7 @@ label {
 }
 .changePassword{
     font-size: 0.875em;
-    background-color: rgb(162, 0, 255);
+    background-color: rgb(162 0 255);
     color: white;
     padding: 10px;
     border: none;
@@ -257,7 +270,7 @@ label {
 }
 .deleteButton{
     font-size: 0.875em;
-    background-color: rgb(255, 0, 0);
+    background-color: rgb(255 0 0);
     color: white;
     padding: 10px;
     border: none;
