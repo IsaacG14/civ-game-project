@@ -77,11 +77,9 @@ export default function Hub() {
     document.querySelector("#create-game-popup").showModal();
   }
   function onCreateGameClose(e) {
-    document.querySelector("#create-game-popup").close();
     document.querySelector("#create-game-text-input").value = "";
   }
   function onCreateGameSubmit(e) {
-    document.querySelector("#create-game-popup").close();
     document.querySelector("#create-game-text-input").value = "";
   }
 
@@ -118,11 +116,11 @@ export default function Hub() {
   return (
     <div className="fullScreen bg-gradient" style = {{ flexDirection: "column" }}>
       <Navbar 
-        onClickButton = {accountInfo}
-        clickButtonText= "Account"
-        onClickButton2 = {leaderboard}
-        clickButton2Text ="Leaderboard"
-        onLogoutClick = {logout}
+        onClickButton={accountInfo}
+        clickButtonText="Account"
+        onClickButton2={leaderboard}
+        clickButton2Text="Leaderboard"
+        onLogoutClick={logout}
       />
 
       <Popup id="create-game-popup" title="CREATE GAME" submitText="Create" 
@@ -140,11 +138,7 @@ export default function Hub() {
             <h2 className = "formHeader">Current Games</h2>
             <p>No Current Games</p>
           </div>
-          <button className="hubButton" onClick={onCreateGameClick}
-            onMouseEnter={e => e.currentTarget.style.backgroundColor = "#050f96ff"}  
-            onMouseLeave={e => e.currentTarget.style.backgroundColor = ""}>
-              Create Game
-          </button>
+          <button className="hubButton" onClick={onCreateGameClick}>Create Game</button>
         </div>
 
         <div className = "hubColumn">
@@ -154,9 +148,7 @@ export default function Hub() {
               {"Name: " + game.name} <br/> {"Type: " + game.type_name} <br/> {"Created: " + game.creation_date}
             </p>))}</div>
           </div>
-          <button className = "hubButton"
-            onMouseEnter = {e=> e.currentTarget.style.backgroundColor = "#050f96ff"}  
-            onMouseLeave={e => e.currentTarget.style.backgroundColor = ""}>Join Private Game</button>
+          <button className="hubButton">Join Private Game</button>
         </div>
       </div> 
     </div>

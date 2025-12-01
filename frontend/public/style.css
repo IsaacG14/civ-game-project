@@ -132,15 +132,24 @@ label {
 
 /* All Hub Styles */
 .hubContent {
+    position: absolute;
+    left: 30px;
+    right: 30px;
+    bottom: 30px;
+    top: calc(var(--navbar-height) + 30px);
+
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    gap: 60px;
-    margin-top: 40px;
+    gap: 90px;
     flex-wrap: wrap;
+    overflow-y: auto;
 }
 
 .hubColumn {
+    position: relative;
+    width: min(300px, calc(100vw - 120px));
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -148,32 +157,39 @@ label {
 }
 
 .hubBox {
-    background-color: rgb(199 96 1);
-    width: 300px;
-    height: 650px;
+    width: 100%;
+    flex-grow: 1;
     padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgb(245 158 100 / 0.4);
-    overflow-y: auto;
     text-align: center;
+
+    background-color: var(--primary);
+    border-radius: 12px;
+    box-shadow: 0 5px 5px rgba(0 0 0 / 0.2);
+    color: var(--text-light);
 }
 
 .hubButton {
     width: 250px;
+    flex-grow: 0;
+
     background-color: var(--secondary);
-    color: white;
+    color: var(--text-dark);
     padding: 10px;
-    border: 3px solid white;
+    border-width: 2px;
+    border-style: solid;
+    border-color: transparent;
     border-radius: 8px;
     cursor: pointer;
     font-weight: bold;
     margin-top: 20px;
-    transition: background-color 0.2s; 
-}
 
+    transition-property: background-color, color, border-color;
+    transition-duration: 100ms;
+}
 .hubButton:hover {
-    background-color: var(--submit-color);
-    color:white;
+    background-color: var(--secondary-dark);
+    color: var(--text-light);
+    border-color: var(--text-light);
 }
 
 
