@@ -1,7 +1,8 @@
 * {
-    --primary:        lch( 7% 15.7 25);
-    --secondary:      lch(74% 76.0 83);
-    --secondary-dark: lch(45% 52.5 83);
+    --primary:        oklch(20.4% 0.048 28);
+    --primary-light:  oklch(35.0% 0.090 28);
+    --secondary:      oklch(77.9% 0.158 84);
+    --secondary-dark: oklch(52.8% 0.108 84);
     --text-light: rgb(217 217 217);
     --text-dark: rgb(34 34 34);
 
@@ -321,4 +322,32 @@ label {
     margin-left: 20px;
     margin-right: 20px;
     padding: 10px;
+}
+
+
+/* Popup styles */
+.popup-dialog {
+    background-color: var(--primary);
+    border-radius: 12px;
+    color: var(--text-light);
+
+    position: relative;
+    padding: 40px 40px 20px 40px;
+}
+.close-icon {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+.popup-submit-btn {
+    background-color: var(--secondary);
+    color: var(--text-dark);
+    margin: 0 16px;
+}
+.popup-cancel-btn {
+    background-color: var(--primary-light);
+    color: var(--text-light);
 }

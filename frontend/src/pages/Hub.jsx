@@ -7,6 +7,8 @@ npm install react react-dom react-router-dom
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar"
+import Popup from "../components/Popup";
+import TextInput from "../components/TextInput";
 
 export default function Hub() {
   const navigate = useNavigate();
@@ -70,6 +72,20 @@ export default function Hub() {
 
   }, [navigate]);
 
+
+  function onCreateGameClick(e) {
+    document.querySelector("#create-game-popup").showModal();
+  }
+  function onCreateGameClose(e) {
+    document.querySelector("#create-game-popup").close();
+    document.querySelector("#create-game-text-input").value = "";
+  }
+  function onCreateGameSubmit(e) {
+    document.querySelector("#create-game-popup").close();
+    document.querySelector("#create-game-text-input").value = "";
+  }
+
+
   // Deletes token from local storage and sends user to login page on button click.
   function logout() {
     localStorage.removeItem("token");
@@ -100,7 +116,7 @@ export default function Hub() {
   }
 
   return (
-    <div className ="fullScreen bg-gradient" style = {{ flexDirection: "column" }}>
+    <div className="fullScreen bg-gradient" style = {{ flexDirection: "column" }}>
       <Navbar 
         onClickButton = {accountInfo}
         clickButtonText= "Account"
@@ -108,16 +124,27 @@ export default function Hub() {
         clickButton2Text ="Leaderboard"
         onLogoutClick = {logout}
       />
+
+      <Popup id="create-game-popup" title="CREATE GAME" submitText="Create" 
+          onSubmit={onCreateGameSubmit} 
+          onClose={onCreateGameClose}>
+        <p>Create a game here eventually.</p>
+        <p>Sample text 1</p>
+        <TextInput label="Input Field" id="create-game-text-input" onEnterPress={onCreateGameSubmit}/>
+        <p>Sample text 2</p>
+      </Popup>
+      
       <div className = "hubContent">
         <div className = "hubColumn">
           <div className = "hubBox">
             <h2 className = "formHeader">Current Games</h2>
             <p>No Current Games</p>
           </div>
-          <button className="hubButton"
+          <button className="hubButton" onClick={onCreateGameClick}
             onMouseEnter={e => e.currentTarget.style.backgroundColor = "#050f96ff"}  
             onMouseLeave={e => e.currentTarget.style.backgroundColor = ""}>
-              Create Game</button>
+              Create Game
+          </button>
         </div>
 
         <div className = "hubColumn">
