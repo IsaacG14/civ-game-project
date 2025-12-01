@@ -138,7 +138,7 @@ export default function Hub() {
             <h2 className = "formHeader">Current Games</h2>
             <p>No Current Games</p>
           </div>
-          <button className="hubButton" onClick={onCreateGameClick}>Create Game</button>
+          <button className="hub-button light-button" onClick={onCreateGameClick}>Create Game</button>
         </div>
 
         <div className = "hubColumn">
@@ -148,7 +148,7 @@ export default function Hub() {
               {"Name: " + game.name} <br/> {"Type: " + game.type_name} <br/> {"Created: " + game.creation_date}
             </p>))}</div>
           </div>
-          <button className="hubButton">Join Private Game</button>
+          <button className="hub-button light-button">Join Private Game</button>
         </div>
       </div> 
     </div>

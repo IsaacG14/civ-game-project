@@ -28,12 +28,12 @@ export default function Popup(props: Props) {
             
             <div>
                 {!props.hideCancel && 
-                    <button className="popup-cancel-btn" type="button" 
+                    <button className="dark-button" type="button" 
                             onClick={() => { dialogRef.current?.close(); }}>
                         {props.cancelText ?? "Cancel"}
                     </button>
                 }
-                <button className="popup-submit-btn" type="button" 
+                <button className="light-button" type="button" style={{margin: "0 16px"}}
                         onClick={() => { props.onSubmit(); dialogRef.current?.close(); }}>
                     {props.submitText ?? "Submit"}
                 </button>

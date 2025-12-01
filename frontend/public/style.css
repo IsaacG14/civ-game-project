@@ -1,8 +1,11 @@
 * {
-    --primary:        oklch(20.4% 0.048 28);
-    --primary-light:  oklch(35.0% 0.090 28);
-    --secondary:      oklch(77.9% 0.158 84);
-    --secondary-dark: oklch(52.8% 0.108 84);
+    --primary-light:   oklch(35.0% 0.090 28);
+    --primary:         oklch(20.4% 0.048 28);
+
+    --secondary-light: oklch(90.8% 0.175 84);
+    --secondary:       oklch(77.9% 0.158 84);
+    --secondary-dark:  oklch(52.8% 0.107 84);
+    
     --text-light: rgb(217 217 217);
     --text-dark: rgb(34 34 34);
 
@@ -46,7 +49,7 @@ a:hover {
 
 button {
     font-size: 0.875em;
-    background-color: var(--secondary);
+    background-color: var(--text-light);
     color: var(--text-dark);
     padding: 10px;
     border: none;
@@ -67,6 +70,34 @@ button {
         lch(20.0% 30 40) 85%, 
         lch(20.0% 30 30) 100%
     );
+}
+
+
+/* Generic button styles */
+.dark-button {
+    background-color: var(--primary);
+    color: var(--text-light);
+    border: 2px solid var(--primary-light);
+
+    transition-duration: 100ms;
+    transition-property: background-color, border-color;
+}
+.dark-button:hover {
+    border-color: var(--text-light);
+    background-color: var(--primary-light);
+}
+
+.light-button {
+    background-color: var(--secondary);
+    color: var(--text-dark);
+    border: 2px solid transparent;
+
+    transition-duration: 100ms;
+    transition-property: background-color, border-color;
+}
+.light-button:hover {
+    border-color: var(--text-light);
+    background-color: var(--secondary-light);
 }
 
 
@@ -92,11 +123,6 @@ button {
     display: flex;
     flex-direction: column;
     gap: 1.5em;
-}
-
-.formSubmitButton {
-    background-color: var(--secondary);
-    color: var(--text-dark);
 }
 
 .formTextInput {
@@ -129,6 +155,26 @@ label {
 }
 
 
+/* Navbar Styles */
+header.navbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--primary);
+    border-bottom: 2px solid var(--primary-light);
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    padding: 10px;
+    gap: 80px;
+}
+
+.navbar-button.navbar-button {
+    border-radius: 6px;
+    padding: 10px 40px;
+}
+ 
 
 /* All Hub Styles */
 .hubContent {
@@ -168,28 +214,11 @@ label {
     color: var(--text-light);
 }
 
-.hubButton {
+.hub-button.hub-button {
+    /* repeated selector to give it higher precedence */
     width: 250px;
     flex-grow: 0;
-
-    background-color: var(--secondary);
-    color: var(--text-dark);
-    padding: 10px;
-    border-width: 2px;
-    border-style: solid;
-    border-color: transparent;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
     margin-top: 20px;
-
-    transition-property: background-color, color, border-color;
-    transition-duration: 100ms;
-}
-.hubButton:hover {
-    background-color: var(--secondary-dark);
-    color: var(--text-light);
-    border-color: var(--text-light);
 }
 
 
@@ -357,13 +386,4 @@ label {
     width: 20px;
     height: 20px;
     cursor: pointer;
-}
-.popup-submit-btn {
-    background-color: var(--secondary);
-    color: var(--text-dark);
-    margin: 0 16px;
-}
-.popup-cancel-btn {
-    background-color: var(--primary-light);
-    color: var(--text-light);
 }

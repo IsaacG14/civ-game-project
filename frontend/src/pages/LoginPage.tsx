@@ -80,9 +80,9 @@ export default function LoginPage() {
 
         <ErrorBox message={error} setMessage={setError} />
 
-        <button type="button" className="formSubmitButton cuprum-600" onClick={handleLogin}>Log In</button>
+        <button type="button" className="light-button" onClick={handleLogin}>Log In</button>
         
-        <span className="cuprum-600">
+        <span>
           Don't have an account? <a onClick={handleCreateAccount}>Create one here</a>
         </span>
 

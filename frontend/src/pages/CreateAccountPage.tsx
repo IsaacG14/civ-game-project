@@ -51,9 +51,9 @@ export default function CreateAccountPage() {
 
         <ErrorBox message={error} setMessage={setError} />
 
-        <button type="button" className="formSubmitButton cuprum-600" onClick={handleSignup}>Create Account</button>
+        <button type="button" className="light-button" onClick={handleSignup}>Create Account</button>
 
-        <span className="cuprum-600">
+        <span>
           Already have an account? <a onClick={backToLogin}>Log in here</a>
         </span>
       </form>
