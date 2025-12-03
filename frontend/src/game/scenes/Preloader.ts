@@ -64,7 +64,7 @@ export class Preloader extends Scene
         //  Move to the next scene. You could also swap this for a Scene Transition, such as a camera fade.
 
         if (gameData.typeName === typeNames.BLACKJACK) {
-            this.scene.start('MainScene');
+            this.scene.start('BlackJackScene');
         }
         else if (gameData.typeName === typeNames.CHECKERS) {
             this.scene.start('MainScene');
