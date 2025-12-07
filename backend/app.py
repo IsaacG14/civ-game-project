@@ -166,6 +166,16 @@ def change_password():
         print("error -- ", {"error": str(e)})
         return jsonify({"error": "Internal server error"}), 500
 
+def get_db_connection():
+    return mysql.connector.connect(**db_config)
+
+def query_db(query_template: str, params: list[any] | dict[str, any] = []):
+    with get_db_connection() as conn:
+        with conn.cursor(dictionary=True) as cursor:
+            cursor.execute(query_template, params)
+            rows = cursor.fetchall()
+    return rows
+
 
 @app.route("/api/joinable-games")
 def get_joinable_games():
@@ -173,11 +183,36 @@ def get_joinable_games():
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
         cursor.execute("""
-            SELECT G.game_id, G.type_name, G.name, G.creation_date, G.status, U.invite_code, U.is_public
-            FROM game as G, unstarted_game as U
-            WHERE G.game_id = U.game_id 
-            AND U.is_public = 1;
+            SELECT G.game_id, G.type_name, G.name, G.creation_date, G.status, U.invite_code, U.is_public, COUNT(P.user_id) AS current_players
+            FROM game as G
+            JOIN unstarted_game as U on G.game_id = U.game_id
+            JOIN game_type as T on G.type_name = T.type_name
+            LEFT JOIN plays as P on P.game_id = g.game_id
+            WHERE U.is_public = 1
+            GROUP BY G.game_id, G.type_name, G.name, G.creation_date, G.status, 
+                U.invite_code, U.is_public, T.max_players
+            HAVING COUNT(P.user_id) < T.max_players;    
             """)
+        return jsonify(value), 200
+    except Exception as e:
+        print("error at endpoint /api/joinable-games --", e)
+        return jsonify({"error": str(e)}), 500
+    
+@app.route("/api/current-games")
+@require_jwt
+def get_current_games():
+    try:
+        user_id = request.user_id
+        
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT g.game_id, g.name, g.type_name, g.creation_date
+            FROM Plays p
+            JOIN User u ON p.user_id = u.user_id
+            JOIN Game g ON p.game_id = g.game_id
+            WHERE g.status = 'Ongoing' AND p.user_id = %s;
+            """, (user_id,))
         rows = cursor.fetchall()
         cursor.close()
         conn.close()
@@ -195,7 +230,7 @@ def get_leaderboard(type_name):
             SELECT username, wins, losses
             FROM User u
             JOIN Has_Stats_For h ON u.user_id = h.user_id
-            WHERE h.type_name = %s
+            WHERE h.type_name = %s AND u.is_deleted IS FALSE
             ORDER BY h.wins DESC, h.losses ASC;
             """, (type_name,))
         rows = cursor.fetchall()
@@ -205,13 +240,63 @@ def get_leaderboard(type_name):
     except Exception as e:
         print("error -- ", {"error": str(e)})
         return jsonify({"error": str(e)}), 500
+    
+@app.route("/api/account/total_stats", methods=["GET"])
+@require_jwt
+def get_stats():
+    user_id = request.user_id
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT SUM(wins) AS total_wins, SUM(losses) AS total_losses, 
+                       ROUND(SUM(wins) * 1.0/ (SUM(wins) + SUM(losses)) * 100, 2) AS total_winrate
+            FROM has_stats_for
+            WHERE user_id = %s;
+            """, (user_id,))
+        rows = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return jsonify(rows)
+    except Exception as e:
+        print("error -- ", {"error": str(e)})
+        return jsonify({"error": str(e)}), 500
 
+@app.route("/api/account/game_stats", methods=["GET"])
+@require_jwt
+def get_specific_stats():
+    user_id = request.user_id
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT type_name, wins, losses,
+                       ROUND(wins * 1.0/ (wins + losses) * 100, 2) AS winrate
+            FROM has_stats_for
+            WHERE user_id = %s;
+            """, (user_id,))
+        rows = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return jsonify(rows)
+    except Exception as e:
+        print("error -- ", {"error": str(e)})
+        return jsonify({"error": str(e)}), 500
 
-def get_db_connection():
-    # Mysql information (change to match your database)
-    return mysql.connector.connect(
-        **db_config
-    )
+@app.route("/api/game-<int:id>")
+def get_game(id: int):
+    try:
+        value = query_db(
+            """
+            SELECT * FROM Game WHERE gameID = %s
+            """, [id])
+        if len(value) == 0:
+            return "not found", 404
+        else:
+            return jsonify(value[0]), 200
+    except Exception as e:
+        print(f"error at endpoint /api/game-<int:id> with id={id} --", e)
+        return jsonify({"error": str(e)}), 500
 
 # Checks for validity of token.
 @app.route("/api/hub")

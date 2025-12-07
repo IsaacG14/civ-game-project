@@ -36,49 +36,44 @@ export default function Leaderboard() {
   }
 
   return (
-    <div className = "fullScreen">
+    <div className="fullScreen bg-gradient">
       <Navbar 
-              onClickButton = {accountInfo}
-              clickButtonText = "Account"
-              onClickButton2 = {hub}
-              clickButton2Text = "Hub"
-              onLogoutClick = {logout}
-            />
-      <div className = "leaderboardColumn">
-        <h1 className = "russo">Leaderboard</h1>
-        <div className="gameButtons" style={{ marginBottom: "10px" }}>
+          onClickButton = {accountInfo}
+          clickButtonText = "Account"
+          onClickButton2 = {hub}
+          clickButton2Text = "Hub"
+          onLogoutClick = {logout}
+      />
+      <div className="leaderboard-column">
+        <h1 className="russo">LEADERBOARD</h1>
+        <div className="game-buttons">
           {gameTypes.map(game => (
             <button 
-              key={game} 
-              onClick={() => setSelectedGame(game)}
-              style={{
-                marginRight: "5px",
-                padding: "5px 10px",
-                backgroundColor: selectedGame === game ? "#886400ff" : "#ccc",
-                color: selectedGame === game ? "#fff" : "#000",
-                border: "none",
-                borderRadius: "5px",
-                cursor: "pointer"
-              }}
+                type="button" 
+                key={game} 
+                onClick={() => setSelectedGame(game)}
+                className={selectedGame === game ? "selected" : undefined}
             >
               {game}
             </button>
           ))}
         </div>
-        <div className ="leaderboardRow" style = {{backgroundColor: "#886400ff", position: "sticky"}}>
-          <span className = "place">#</span>
-          <span className = "username">Username</span>
-          <span className = "wins">W</span>
-          <span className = "losses">L</span>
+        <div className="leaderboard-row header">
+          <span className="place">#</span>
+          <span className="username">Username</span>
+          <span className="wins">W</span>
+          <span className="losses">L</span>
         </div>
-        {leaderboardData.map((entry, index) => (
-          <div key={index} className = "leaderboardRow">
-            <span className = "place">{index + 1}</span>
-            <span className = "username">{entry.username}</span>
-            <span className = "wins">{entry.wins}</span>
-            <span className = "losses">{entry.losses}</span>
-          </div>
-        ))}
+        <div id="leaderboard-entry-container">
+          {leaderboardData.map((entry, index) => (
+            <div key={index} className="leaderboard-row">
+              <span className="place">{index + 1}</span>
+              <span className="username">{entry.username}</span>
+              <span className="wins">{entry.wins}</span>
+              <span className="losses">{entry.losses}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

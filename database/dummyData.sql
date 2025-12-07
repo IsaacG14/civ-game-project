@@ -239,7 +239,7 @@ VALUES
 (3, 15); -- Charlie
 
 -- -----------------------------------------------------------
--- 16. Scenario 15: Finished Blackjack Game (Game 16)
+-- 16. Scenario 15: Unfinished Uno Game (Game 16)
 INSERT INTO Game (game_id, type_name, `name`, creation_date, `status`)
 VALUES (16, 'Uno', 'Casual Uno Lobby', '2025-11-13 09:00:00', 'Unstarted');
 
@@ -251,8 +251,8 @@ VALUES
 (1, 16), -- Alice (host)
 (2, 16), -- Bob
 (3, 16), -- Charlie
-(4, 16), -- Willy
-(5, 16); -- David
+(4, 16); -- Willy
+
 
 -- -----------------------------------------------------------
 -- 17. Populate HasStatsFor (Leaderboard Stats)
@@ -265,4 +265,20 @@ VALUES
 (2, 'TicTacToe', 0, 1), -- Bob's loss from Game 1
 (2, 'Checkers', 10, 3),   -- Bob is a good Checkers player
 (3, 'Checkers', 8, 8),   -- Charlie is average at Checkers
-(4, 'RoShamBo', 1, 0);   -- Willy played 1 game of RoShamBo
+(4, 'RoShamBo', 1, 0),   -- Willy played 1 game of RoShamBo
+(3, 'TicTacToe', 1, 1),
+(4, 'TicTacToe', 1, 1),
+(4, 'Checkers', 0, 7),
+(5, 'Uno', 10, 1),
+(3, 'Uno', 8, 2),
+(1, 'War', 1, 2),
+(2, 'War', 2, 4),
+(3, 'War', 4, 0),  
+(4, 'Blackjack', 5, 6),  
+(5, 'Blackjack', 3, 1),  
+(1, 'Blackjack', 2, 9),  
+(2, 'Blackjack', 0, 2),  
+(1, 'RoShamBo', 17, 13),  
+(2, 'RoShamBo', 10, 14),  
+(3, 'RoShamBo', 3, 9),  
+(5, 'RoShamBo', 10, 10);

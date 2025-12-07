@@ -7,6 +7,7 @@ import CreateAccountPage from "./pages/CreateAccountPage.jsx";
 import Hub from "./pages/Hub.jsx";
 import Account from "./pages/AccountInfoPage.jsx";
 import Leaderboard from "./pages/Leaderboard.jsx";
+import GamePage from "./pages/GamePage.js";
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
@@ -26,6 +27,7 @@ function App()
                     <Route path = "/hub" element = {<Hub />} />
                     <Route path = "/account" element = {<Account />} />
                     <Route path = "/leaderboard" element = {<Leaderboard />} />
+                    <Route path = "/game" element = {<GamePage />} />
                 </Routes>
             </Router>
         </div>
