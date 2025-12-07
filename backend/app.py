@@ -166,6 +166,16 @@ def change_password():
         print("error -- ", {"error": str(e)})
         return jsonify({"error": "Internal server error"}), 500
 
+def get_db_connection():
+    return mysql.connector.connect(**db_config)
+
+def query_db(query_template: str, params: list[any] | dict[str, any] = []):
+    with get_db_connection() as conn:
+        with conn.cursor(dictionary=True) as cursor:
+            cursor.execute(query_template, params)
+            rows = cursor.fetchall()
+    return rows
+
 
 @app.route("/api/joinable-games")
 def get_joinable_games():
@@ -183,12 +193,9 @@ def get_joinable_games():
                 U.invite_code, U.is_public, T.max_players
             HAVING COUNT(P.user_id) < T.max_players;    
             """)
-        rows = cursor.fetchall()
-        cursor.close()
-        conn.close()
-        return jsonify(rows)
+        return jsonify(value), 200
     except Exception as e:
-        print("error -- ", {"error": str(e)})
+        print("error at endpoint /api/joinable-games --", e)
         return jsonify({"error": str(e)}), 500
     
 @app.route("/api/current-games")
@@ -276,12 +283,20 @@ def get_specific_stats():
         print("error -- ", {"error": str(e)})
         return jsonify({"error": str(e)}), 500
 
-
-def get_db_connection():
-    # Mysql information (change to match your database)
-    return mysql.connector.connect(
-        **db_config
-    )
+@app.route("/api/game-<int:id>")
+def get_game(id: int):
+    try:
+        value = query_db(
+            """
+            SELECT * FROM Game WHERE gameID = %s
+            """, [id])
+        if len(value) == 0:
+            return "not found", 404
+        else:
+            return jsonify(value[0]), 200
+    except Exception as e:
+        print(f"error at endpoint /api/game-<int:id> with id={id} --", e)
+        return jsonify({"error": str(e)}), 500
 
 # Checks for validity of token.
 @app.route("/api/hub")
