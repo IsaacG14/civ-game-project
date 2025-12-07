@@ -1,8 +1,15 @@
 * {
-    --primary: #692a00;
-    --secondary: #e7ae10;
-    --text-light: rgb(217, 217, 217);
-    --text-dark: rgb(34, 34, 34);
+    --primary-light:   oklch(35.0% 0.090 28);
+    --primary:         oklch(20.4% 0.048 28);
+
+    --secondary-light: oklch(90.8% 0.175 84);
+    --secondary:       oklch(77.9% 0.158 84);
+    --secondary-dark:  oklch(52.8% 0.107 84);
+    
+    --text-light: rgb(217 217 217);
+    --text-dark: rgb(34 34 34);
+
+    --navbar-height: 60px;
 
     font-family: "Cuprum", sans-serif;
     font-optical-sizing: auto;
@@ -26,7 +33,7 @@
 body {
     margin: 0;
     padding: 0;
-    color: rgba(255, 255, 255, 0.87);
+    color: rgb(255 255 255 / 0.87);
     background-color: #000000; 
     font-family: Arial, Helvetica, sans-serif;
     font-size: 18px;
@@ -34,7 +41,7 @@ body {
 
 a {
     cursor: pointer;
-    color: var(--secondary); /* #2870db */
+    color: var(--secondary);
 }
 a:hover {
     text-decoration: underline;
@@ -42,7 +49,7 @@ a:hover {
 
 button {
     font-size: 0.875em;
-    background-color: var(--secondary);
+    background-color: var(--text-light);
     color: var(--text-dark);
     padding: 10px;
     border: none;
@@ -52,17 +59,45 @@ button {
 }
 
 .bg-gradient {
-    background: lch(16.0% 14.0 18.0);
+    background: var(--primary);
     background: linear-gradient(
         0deg,
-        lch(16.0% 14.0 18.0) 0%, 
-        lch(24.0% 29.0 33.3) 15%, 
-        lch(25.0% 37.0 44.5) 30%,
-        lch(26.0% 41.0 52.7) 50%, 
-        lch(25.0% 37.0 44.5) 70%,
-        lch(24.0% 29.0 33.3) 85%, 
-        lch(16.0% 14.0 18.0) 100%
+        lch(20.0% 30 30) 0%, 
+        lch(20.0% 30 40) 15%, 
+        lch(20.0% 30 48) 30%,
+        lch(20.0% 30 54) 50%, 
+        lch(20.0% 30 48) 70%,
+        lch(20.0% 30 40) 85%, 
+        lch(20.0% 30 30) 100%
     );
+}
+
+
+/* Generic button styles */
+.dark-button {
+    background-color: var(--primary);
+    color: var(--text-light);
+    border: 2px solid var(--primary-light);
+
+    transition-duration: 100ms;
+    transition-property: background-color, border-color;
+}
+.dark-button:hover {
+    border-color: var(--text-light);
+    background-color: var(--primary-light);
+}
+
+.light-button {
+    background-color: var(--secondary);
+    color: var(--text-dark);
+    border: 2px solid transparent;
+
+    transition-duration: 100ms;
+    transition-property: background-color, border-color;
+}
+.light-button:hover {
+    border-color: var(--text-light);
+    background-color: var(--secondary-light);
 }
 
 
@@ -77,10 +112,10 @@ button {
 }
 
 .formContainer {
-    background-color: rgba(0, 0, 0, 40%);
+    background-color: rgb(0 0 0 / 0.4);
     padding: 40px;
     border-radius: 12px;
-    box-shadow: inset 0 5px 5px rgba(0, 0, 0, 20%);
+    box-shadow: inset 0 5px 5px rgb(0 0 0 / 0.2);
     width: 300px;
 
     color: var(--text-light);
@@ -88,11 +123,6 @@ button {
     display: flex;
     flex-direction: column;
     gap: 1.5em;
-}
-
-.formSubmitButton {
-    background-color: var(--secondary);
-    color: var(--text-dark);
 }
 
 .formTextInput {
@@ -119,24 +149,53 @@ label {
 }
 
 .error-box {
-    background-color: hsla(0, 80%, 30%, 50%);
-    border: hsla(0, 80%, 30%, 100%) solid 2px;
+    background-color: hsl(0 80% 20%);
+    border: hsl(0 80% 30%) solid 2px;
     border-radius: 8px;
 }
 
 
+/* Navbar Styles */
+header.navbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--primary);
+    border-bottom: 2px solid var(--primary-light);
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    padding: 10px;
+    gap: 80px;
+}
+
+.navbar-button.navbar-button {
+    border-radius: 6px;
+    padding: 10px 40px;
+}
+ 
 
 /* All Hub Styles */
 .hubContent {
+    position: absolute;
+    left: 30px;
+    right: 30px;
+    bottom: 30px;
+    top: calc(var(--navbar-height) + 30px);
+
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    gap: 60px;
-    margin-top: 40px;
+    gap: 90px;
     flex-wrap: wrap;
+    overflow-y: auto;
 }
 
 .hubColumn {
+    position: relative;
+    width: min(300px, calc(100vw - 120px));
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -144,86 +203,122 @@ label {
 }
 
 .hubBox {
-    background-color: rgb(199, 96, 1);
-    width: 300px;
-    height: 650px;
+    width: 100%;
+    flex-grow: 1;
     padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(245, 158, 100, 0.4);
-    overflow-y: auto;
     text-align: center;
+
+    background-color: var(--primary);
+    border-radius: 12px;
+    box-shadow: 0 5px 5px rgba(0 0 0 / 0.2);
+    color: var(--text-light);
 }
 
-.hubButton {
+.hub-button.hub-button {
+    /* repeated selector to give it higher precedence */
     width: 250px;
-    background-color: var(--secondary);
-    color: white;
-    padding: 10px;
-    border: 3px solid white;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
+    flex-grow: 0;
     margin-top: 20px;
-    transition: background-color 0.2s; 
-}
-
-.hubButton:hover {
-    background-color: var(--submit-color);
-    color:white;
 }
 
 
 /*All Leaderboard Styles*/
-.leaderboardColumn {
+.leaderboard-column {
     position: fixed;
-    top: 70px;
+    top: calc(var(--navbar-height) + 10px);
+    bottom: 10px;
+    width: min(700px, calc(100vw - 100px));
+    
     display: flex;
     flex-direction: column;
-    width: 700px;
-    background-color: var(--primary);
-    border-radius: 8px;
-    overflow-y: auto;
-    height: calc(100vh - 60px);
+    padding: 40px;
+
+    background-color: rgb(0 0 0 / 0.4);
+    border-radius: 12px;
+    box-shadow: inset 0 5px 5px rgb(0 0 0 / 0.2);
 }
-.leaderboardRow {
+
+.game-buttons {
+    margin-bottom: 10px;
+}
+.game-buttons > * {
+    margin-right: 5px;
+    padding: 5px 10px;
+    background-color: #ccc;
+    color: #000;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.game-buttons > *.selected {
+    /* choose .selected children of .game-buttons only */
+    background-color: var(--secondary-dark);
+    color: #fff;
+}
+
+#leaderboard-entry-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    overflow-y: auto;
+    border-radius: 5px;
+}
+.leaderboard-row {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     padding: 5px 10px;
     gap: 40px;
-    margin-bottom: 5px;
-    background-color: var(--secondary);
     border-radius: 5px;
+    font-size: 32px;
 }
-.place {
+.leaderboard-row:not(.header) {
+    background-color: var(--secondary);
+}
+.leaderboard-row.header {
+    background-color: var(--secondary-dark);
+    margin-bottom: 5px;
+}
+.leaderboard-row > .place {
     width: 40px;
     font-weight: bold;
-    font-size: 32px;
 }
-.username {
+.leaderboard-row > .username {
     flex: 1;
     text-align: left;
-    font-size: 32px;
 }
-.wins, .losses {
+.leaderboard-row > .wins, 
+.leaderboard-row > .losses {
     width: 50px;
     text-align: center;
-    font-size: 32px;
 }
 
 
-/*All Account Info Styles*/
+/* All Account Info Styles */
 .accountColumn {
+    position: relative;
+    background-color: transparent;
+    
+    padding: 40px;
+    border-radius: 12px;
+    width: 300px;
+
+    color: var(--text-dark);
+
     display: flex;
     flex-direction: column;
-    width: 500px;
-    background-color: var(--secondary);
-    border-radius: 10px;
+    gap: 1.5em;
+}
+.solid-panel {
+    background-color: var(--primary);
+    border-radius: 12px;
+    box-shadow: 0 5px 5px rgba(0 0 0 / 0.12);
+    color: var(--text-light);
 }
 .userID {
     flex: 1;
     font-weight: bold;
-    color: black;
     text-align: left;
     margin-top: 30px;
     margin-left: 40px;
@@ -231,13 +326,12 @@ label {
 .accountStat {
     flex: 2;
     font-weight: normal;
-    color: black;
     text-align: left;
     margin-left: 40px;
 }
 .changeEmail {
     font-size: 0.875em;
-    background-color: rgb(0, 26, 255);
+    background-color: rgb(0 26 255);
     color: white;
     padding: 10px;
     border: none;
@@ -247,7 +341,7 @@ label {
 }
 .changePassword{
     font-size: 0.875em;
-    background-color: rgb(162, 0, 255);
+    background-color: rgb(162 0 255);
     color: white;
     padding: 10px;
     border: none;
@@ -257,7 +351,7 @@ label {
 }
 .deleteButton{
     font-size: 0.875em;
-    background-color: rgb(255, 0, 0);
+    background-color: rgb(255 0 0);
     color: white;
     padding: 10px;
     border: none;
@@ -273,4 +367,23 @@ label {
     margin-left: 20px;
     margin-right: 20px;
     padding: 10px;
+}
+
+
+/* Popup styles */
+.popup-dialog {
+    background-color: var(--primary);
+    border-radius: 12px;
+    color: var(--text-light);
+
+    position: relative;
+    padding: 40px 40px 20px 40px;
+}
+.close-icon {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
 }

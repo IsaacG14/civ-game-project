@@ -186,7 +186,7 @@ export default function Account() {
 
 
   return (
-    <div className = "fullScreen">
+    <div className = "fullScreen bg-gradient">
           <Navbar 
                   onClickButton = {hub}
                   clickButtonText = "Hub"
@@ -195,6 +195,7 @@ export default function Account() {
                   onLogoutClick = {logout}
                 />
       <div className = "accountColumn">
+        <div className="solid-panel">
           <div className = "userID">UserID: {userID}</div>
           <div className = "accountStat">User Name: {username}</div>
           <div className = "accountStat">Email: {email}</div>
@@ -219,7 +220,7 @@ export default function Account() {
                 placeholder="Enter new email"
                 value={newEmail}
                 onChange={(e) => setNewEmail(e.target.value)}
-              />
+                />
               <button type="submit">Submit</button>
             </form>
           )}
@@ -252,6 +253,9 @@ export default function Account() {
                 Delete Account
             </button>
           </div>
+
+        </div>
+          
       </div>
     </div>
   );
