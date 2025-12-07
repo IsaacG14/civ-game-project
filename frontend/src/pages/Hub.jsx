@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar"
 import Popup from "../components/Popup";
 import TextInput from "../components/TextInput";
+import CreateGamePopup from "../components/CreateGamePopup";
 
 export default function Hub() {
   const navigate = useNavigate();
@@ -22,6 +23,11 @@ export default function Hub() {
   const [joinableGames, setJoinableGames] = useState([]);
 
   const [currentGames, setCurrentGames] = useState([]);
+
+  // For creating or joining games.
+  const [isCreateGameOpen, setCreateGameOpen] = useState(false);
+  const openCreateGamePopup = () => setCreateGameOpen(true);
+  const closeCreateGamePopup = () => setCreateGameOpen(false);
 
   // When page loads, check for token validity. If invalid token send user to login page.
   useEffect(() => {
@@ -136,14 +142,10 @@ export default function Hub() {
         onLogoutClick={logout}
       />
 
-      <Popup id="create-game-popup" title="CREATE GAME" submitText="Create" 
-          onSubmit={onCreateGameSubmit} 
-          onClose={onCreateGameClose}>
-        <p>Create a game here eventually.</p>
-        <p>Sample text 1</p>
-        <TextInput label="Input Field" id="create-game-text-input" onEnterPress={onCreateGameSubmit}/>
-        <p>Sample text 2</p>
-      </Popup>
+      <CreateGamePopup
+        isOpen={isCreateGameOpen}
+        onClose={closeCreateGamePopup}
+      />
       
       <div className = "hubContent">
         <div className = "hubColumn">
@@ -165,7 +167,7 @@ export default function Hub() {
         <div className = "hubColumn">
           <div className = "hubBox">
             <h2 className = "formHeader">Joinable Games</h2>
-            <div>{joinableGames.map(game => (<p key={game.gameID}>
+            <div>{joinableGames.map(game => (<p key={game.game_id}>
               {"Name: " + game.name} <br/> {"Type: " + game.type_name} <br/> {"Created: " + game.creation_date}
             </p>))}</div>
           </div>

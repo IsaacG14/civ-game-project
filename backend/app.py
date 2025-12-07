@@ -193,7 +193,10 @@ def get_joinable_games():
                 U.invite_code, U.is_public, T.max_players
             HAVING COUNT(P.user_id) < T.max_players;    
             """)
-        return jsonify(value), 200
+        results = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return jsonify(results), 200
     except Exception as e:
         print("error at endpoint /api/joinable-games --", e)
         return jsonify({"error": str(e)}), 500
@@ -288,7 +291,7 @@ def get_game(id: int):
     try:
         value = query_db(
             """
-            SELECT * FROM Game WHERE gameID = %s
+            SELECT * FROM Game WHERE game_id = %s
             """, [id])
         if len(value) == 0:
             return "not found", 404
@@ -317,7 +320,73 @@ def hub_data():
         return jsonify({"message": "Token expired"}), 401
     except jwt.InvalidTokenError:
         return jsonify({"message": "Invalid token"}), 401
+    
+@app.route("/api/game-types", methods=["GET"])
+@require_jwt
+def get_game_types():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT type_name, min_players, max_players
+            FROM Game_Type;
+        """)
+        rows = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return jsonify(rows)
+    except Exception as e:
+        print("error -- ", {"error": str(e)})
+        return jsonify({"error": str(e)}), 500
 
+@app.route("/api/games", methods=["POST"])
+def create_game():
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return jsonify({"message": "Missing token"}), 401
+
+    token = auth_header.split(" ")[1]
+
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        host_user_id = payload["user_id"]
+    except jwt.ExpiredSignatureError:
+        return jsonify({"message": "Token expired"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"message": "Invalid token"}), 401
+
+    data = request.get_json()
+    type_name = data.get("type_name")
+    name = data.get("name")
+    start_date = data.get("start_date")
+    is_public = data.get("is_public")
+    player_count = data.get("player_count")
+
+    if not type_name or not name or not start_date:
+        return jsonify({"message": "Missing fields"}), 400
+    
+    try:
+        cursor = db.cursor()
+        cursor.execute("""
+            INSERT INTO Game (type_name, name, creation_date, start_date, status, is_public, max_players)
+            VALUES (%s, %s, NOW(), %s, 'Unstarted', %s, %s);
+        """, (type_name, name, start_date, is_public, player_count))
+
+        game_id = cursor.lastrowid
+
+        cursor.execute("""
+            INSERT INTO Plays (user_id, game_id, resigned, score, rank)
+            VALUES (%s, %s, 0, 0, NULL);
+        """, (host_user_id, game_id))
+
+        db.commit()
+        cursor.close()
+
+        return jsonify({"message": "Game created", "game_id": game_id})
+    
+    except Exception as e:
+        print("Error creating game:", e)
+        return jsonify({"message": "Server error creating game"}), 500
 
 # Handles login attempts.
 @app.route("/log_in", methods=["POST"])
