@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Popup from "./Popup";
 import TextInput from "./TextInput";
+import ErrorBox from "./ErrorBox";
 
 type JoinPrivateGamePopupProps = {
   close: () => void;
@@ -8,6 +9,7 @@ type JoinPrivateGamePopupProps = {
 
 export default function JoinPrivateGamePopup(props: JoinPrivateGamePopupProps) {
   const [inviteCode, setInviteCode] = useState("");
+  const [error, setError] = useState<string|null>(null);
 
   async function submit() {
     const token = localStorage.getItem("token");
@@ -26,7 +28,7 @@ export default function JoinPrivateGamePopup(props: JoinPrivateGamePopupProps) {
       });
 
       if (!res.ok) {
-        console.error("Join game failed:", await res.text());
+        setError("Join game failed: " + (await res.json())?.message);
         return;
       }
 
@@ -34,7 +36,7 @@ export default function JoinPrivateGamePopup(props: JoinPrivateGamePopupProps) {
       props.close();
     } 
     catch (err) {
-      console.error("Error joining game:", err);
+      setError("Error joining game: " + err);
     }
   }
 
@@ -60,6 +62,8 @@ export default function JoinPrivateGamePopup(props: JoinPrivateGamePopupProps) {
         <small style= {{ color: "var(--text-light)" }}>
             Enter the invite code given to you (max 10 characters)
         </small>
+
+        <ErrorBox message={error} setMessage={setError}/>
       </div>
     </Popup>
   );

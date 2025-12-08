@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Popup from "./Popup";
 import TextInput from "./TextInput";
+import ErrorBox from "./ErrorBox";
 
 type CreateGamePopupProps = {
   close: () => void;
@@ -20,6 +21,8 @@ export default function CreateGamePopup(props: CreateGamePopupProps) {
   const [inviteCode, setInviteCode] = useState("");
   const [startDate, setStartDate] = useState("");
 
+  const [error, setError] = useState<string|null>(null);
+
   useEffect(() => {
     async function loadGameTypes() {
       const token = localStorage.getItem("token");
@@ -30,7 +33,7 @@ export default function CreateGamePopup(props: CreateGamePopupProps) {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) {
-          console.error("Failed to fetch game types", await res.text());
+          setError("Failed to fetch game types: " + (await res.json())?.message);
           return;
         }
         const data: GameTypeInfo[] = await res.json();
@@ -41,14 +44,14 @@ export default function CreateGamePopup(props: CreateGamePopupProps) {
         }
       } 
       catch (err) {
-        console.error("Error fetching game types:", err);
+        setError("Error fetching game types: " + err);
       }
     }
 
     loadGameTypes();
   }, []);
 
-  const selectedInfo = gameTypes.find((g) => g.type_name === selectedGame);
+  const selectedInfo = (gameTypes.find) ? gameTypes.find((g) => g.type_name === selectedGame) : undefined;
 
   async function submit() {
     const token = localStorage.getItem("token");
@@ -71,14 +74,14 @@ export default function CreateGamePopup(props: CreateGamePopupProps) {
       });
 
       if (!res.ok) {
-        console.error("Create game failed:", await res.text());
+        setError("Create game failed: " + (await res.json())?.message);
         return;
       }
 
       console.log("Game created:", await res.json());
       props.close();
     } catch (err) {
-      console.error("Error creating game:", err);
+      setError("Error creating game: " + err);
     }
   }
 
@@ -148,6 +151,8 @@ export default function CreateGamePopup(props: CreateGamePopupProps) {
             onChange={(e) => setStartDate(e.target.value)}
           />
         </label>
+        
+        <ErrorBox message={error} setMessage={setError}/>
       </div>
     </Popup>
   );
