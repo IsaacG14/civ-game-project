@@ -24,11 +24,6 @@ export default function Hub() {
 
   const [currentGames, setCurrentGames] = useState([]);
 
-  // For creating or joining games.
-  const [isCreateGameOpen, setCreateGameOpen] = useState(false);
-  const openCreateGamePopup = () => setCreateGameOpen(true);
-  const closeCreateGamePopup = () => setCreateGameOpen(false);
-
   // When page loads, check for token validity. If invalid token send user to login page.
   useEffect(() => {
     // Get token from local storage.
@@ -142,10 +137,7 @@ export default function Hub() {
         onLogoutClick={logout}
       />
 
-      <CreateGamePopup
-        isOpen={isCreateGameOpen}
-        onClose={closeCreateGamePopup}
-      />
+      <CreateGamePopup/>
       
       <div className = "hubContent">
         <div className = "hubColumn">

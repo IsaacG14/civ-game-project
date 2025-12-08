@@ -339,21 +339,10 @@ def get_game_types():
         print("error -- ", {"error": str(e)})
         return jsonify({"error": str(e)}), 500
 
-@app.route("/api/games", methods=["POST"])
+@app.route("/api/create-game", methods=["POST"])
+@require_jwt
 def create_game():
-    auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        return jsonify({"message": "Missing token"}), 401
-
-    token = auth_header.split(" ")[1]
-
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-        host_user_id = payload["user_id"]
-    except jwt.ExpiredSignatureError:
-        return jsonify({"message": "Token expired"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"message": "Invalid token"}), 401
+    user_id = request.user_id
 
     data = request.get_json()
     type_name = data.get("type_name")
@@ -364,29 +353,46 @@ def create_game():
 
     if not type_name or not name or not start_date:
         return jsonify({"message": "Missing fields"}), 400
-    
-    try:
-        cursor = db.cursor()
-        cursor.execute("""
-            INSERT INTO Game (type_name, name, creation_date, start_date, status, is_public, max_players)
-            VALUES (%s, %s, NOW(), %s, 'Unstarted', %s, %s);
-        """, (type_name, name, start_date, is_public, player_count))
 
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        #Game table 
+        cursor.execute("""
+            INSERT INTO Game (type_name, name, creation_date, start_date, status)
+            VALUES (%s, %s, NOW(), %s, 'Unstarted');
+        """, (type_name, name, start_date))
         game_id = cursor.lastrowid
 
+        #Plays table
         cursor.execute("""
-            INSERT INTO Plays (user_id, game_id, resigned, score, rank)
+            INSERT INTO Plays (user_id, game_id, resigned, score, `rank`)
             VALUES (%s, %s, 0, 0, NULL);
-        """, (host_user_id, game_id))
+        """, (user_id, game_id))
 
-        db.commit()
+        #Unstarted_Game table
+        invite_code = f"{type_name[:3].upper()}{game_id}"
+        cursor.execute("""
+            INSERT INTO Unstarted_Game (game_id, invite_code, is_public)
+            VALUES (%s, %s, %s);
+        """, (game_id, invite_code, is_public))
+
+        conn.commit()
         cursor.close()
+        conn.close()
 
-        return jsonify({"message": "Game created", "game_id": game_id})
-    
+        return jsonify({
+            "message": "Game created",
+            "game_id": game_id,
+            "invite_code": invite_code
+        })
+
     except Exception as e:
         print("Error creating game:", e)
-        return jsonify({"message": "Server error creating game"}), 500
+        return jsonify({"message": "Server error creating game", "error": str(e)}), 500
+
+
 
 # Handles login attempts.
 @app.route("/log_in", methods=["POST"])

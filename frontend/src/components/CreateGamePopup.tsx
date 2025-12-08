@@ -3,7 +3,6 @@ import Popup from "./Popup";
 import TextInput from "./TextInput";
 
 type CreateGamePopupProps = {
-  isOpen: boolean;
   onClose: () => void;
 };
 
@@ -13,7 +12,7 @@ type GameTypeInfo = {
   max_players: number;
 };
 
-export default function CreateGamePopup({ isOpen, onClose }: CreateGamePopupProps) {
+export default function CreateGamePopup({ onClose }: CreateGamePopupProps) {
   const [gameTypes, setGameTypes] = useState<GameTypeInfo[]>([]);
   const [selectedGame, setSelectedGame] = useState<string>("");
   const [playerCount, setPlayerCount] = useState<number>(1);
@@ -22,41 +21,31 @@ export default function CreateGamePopup({ isOpen, onClose }: CreateGamePopupProp
   const [startDate, setStartDate] = useState("");
 
   useEffect(() => {
-    if (!isOpen) return;
+  async function loadGameTypes() {
+    const token = localStorage.getItem("token");
+    if (!token) return;
 
-    async function loadGameTypes() {
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        console.error("No token found");
+    try {
+      const res = await fetch("http://localhost:5000/api/game-types", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        console.error("Failed to fetch game types", await res.text());
         return;
       }
-
-      try {
-        const res = await fetch("http://localhost:5000/api/game-types", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (!res.ok) {
-          console.error("Failed to fetch game types", await res.text());
-          return;
-        }
-
-        const data: GameTypeInfo[] = await res.json();
-        console.log("Fetched game types:", data);
-        setGameTypes(data);
-
-        if (data.length > 0) {
-          setSelectedGame(data[0].type_name);
-          setPlayerCount(data[0].min_players);
-        }
-      } catch (err) {
-        console.error("Error fetching game types:", err);
+      const data: GameTypeInfo[] = await res.json();
+      setGameTypes(data);
+      if (data.length > 0) {
+        setSelectedGame(data[0].type_name);
+        setPlayerCount(data[0].min_players);
       }
+    } catch (err) {
+      console.error("Error fetching game types:", err);
     }
+  }
 
-    loadGameTypes();
-  }, [isOpen]);
+  loadGameTypes();
+}, []);
 
   const selectedInfo = gameTypes.find((g) => g.type_name === selectedGame);
 
@@ -74,8 +63,8 @@ export default function CreateGamePopup({ isOpen, onClose }: CreateGamePopupProp
         body: JSON.stringify({
           type_name: selectedGame,
           name: gameName,
-          players: playerCount,
-          private: isPrivate,
+          player_count: playerCount,
+          is_public: !isPrivate,
           start_date: startDate,
         }),
       });
@@ -109,7 +98,7 @@ export default function CreateGamePopup({ isOpen, onClose }: CreateGamePopupProp
           onEnterPress={handleSubmit}
         />
 
-        <label>
+        <label style={{ color: "white" }}>
           Game Type:
           <select
             value={selectedGame}
@@ -128,7 +117,7 @@ export default function CreateGamePopup({ isOpen, onClose }: CreateGamePopupProp
         </label>
 
         {selectedInfo && (
-          <label>
+          <label style={{ color: "white" }}>
             Number of Players:
             <input
               type="number"
@@ -143,7 +132,7 @@ export default function CreateGamePopup({ isOpen, onClose }: CreateGamePopupProp
           </label>
         )}
 
-        <label>
+        <label style={{ color: "white" }}>
           <input
             type="checkbox"
             checked={isPrivate}
@@ -152,7 +141,7 @@ export default function CreateGamePopup({ isOpen, onClose }: CreateGamePopupProp
           Private Game
         </label>
 
-        <label>
+        <label style={{ color: "white" }}>
           Start Date:
           <input
             type="datetime-local"
