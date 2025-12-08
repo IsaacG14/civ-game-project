@@ -397,6 +397,95 @@ def create_game():
         print("Error creating game:", e)
         return jsonify({"message": "Server error creating game", "error": str(e)}), 500
 
+@app.route("/api/join-game", methods=["POST"])
+@require_jwt
+def join_game():
+    user_id = request.user_id
+
+    data = request.get_json()
+    invite_code = data.get("invite_code", "").strip()
+
+    if invite_code == "":
+        return jsonify({"message": "Invite code is required"}), 400
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        #Find matching invite code
+        cursor.execute("""
+            SELECT g.game_id, g.type_name
+            FROM Unstarted_Game u
+            JOIN Game g ON g.game_id = u.game_id
+            WHERE u.invite_code = %s
+              AND g.status = 'Unstarted';
+        """, (invite_code,))
+        game = cursor.fetchone()
+
+        if not game:
+            return jsonify({"message": "Invalid invite code or game already started"}), 404
+
+        game_id = game["game_id"]
+        type_name = game["type_name"]
+
+        #Check if user is already in the game
+        cursor.execute("""
+            SELECT 1
+            FROM Plays
+            WHERE user_id = %s AND game_id = %s;
+        """, (user_id, game_id))
+
+        if cursor.fetchone():
+            return jsonify({"message": "You are already in this game"}), 400
+
+        # Get max players
+        cursor.execute("""
+            SELECT max_players
+            FROM Game_Type
+            WHERE type_name = %s;
+        """, (type_name,))
+        row = cursor.fetchone()
+
+        if not row:
+            return jsonify({"message": "Game type not found"}), 500
+
+        max_players = row["max_players"]
+
+        #Count current players (using COUNT(user_id))
+        cursor.execute("""
+            SELECT COUNT(user_id) AS player_count
+            FROM Plays
+            WHERE game_id = %s;
+        """, (game_id,))
+        player_count = cursor.fetchone()["player_count"]
+
+        if player_count >= max_players:
+            return jsonify({"message": "This game is already full"}), 400
+
+        #Add player to the game
+        cursor.execute("""
+            INSERT INTO Plays (user_id, game_id, resigned, score, `rank`)
+            VALUES (%s, %s, 0, 0, NULL);
+        """, (user_id, game_id))
+
+        conn.commit()
+
+        return jsonify({
+            "message": "Joined game",
+            "game_id": game_id
+        })
+
+    except Exception as e:
+        print("Error joining game:", e)
+        return jsonify({"message": "Server error joining game", "error": str(e)}), 500
+
+    finally:
+        try:
+            cursor.close()
+            conn.close()
+        except:
+            pass
+
 # Handles login attempts.
 @app.route("/log_in", methods=["POST"])
 def log_in():

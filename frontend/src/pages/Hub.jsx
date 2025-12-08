@@ -10,6 +10,7 @@ import Navbar from "../components/Navbar"
 import Popup from "../components/Popup";
 import TextInput from "../components/TextInput";
 import CreateGamePopup from "../components/CreateGamePopup";
+import JoinPrivateGamePopup from "../components/JoinPrivateGamePopup";
 
 export default function Hub() {
   const navigate = useNavigate();
@@ -96,6 +97,15 @@ export default function Hub() {
   function onCreateGameSubmit(e) {
     document.querySelector("#create-game-text-input").value = "";
   }
+  function onJoinPrivateGameClick(e) {
+    document.querySelector("#join-private-game-popup").showModal();
+  }
+  function onJoinPrivateGameClose(e) {
+    document.querySelector("#join-private-game-text-input").value = "";
+  }
+  function onJoinPrivateGameSubmit(e) {
+    document.querySelector("#join-private-game-text-input").value = "";
+  }
 
 
   // Deletes token from local storage and sends user to login page on button click.
@@ -137,7 +147,8 @@ export default function Hub() {
         onLogoutClick={logout}
       />
 
-      <CreateGamePopup/>
+      <CreateGamePopup onClick={onCreateGameClick}/>
+      <JoinPrivateGamePopup onClick={onJoinPrivateGameClick}/>
       
       <div className = "hubContent">
         <div className = "hubColumn">
@@ -163,7 +174,7 @@ export default function Hub() {
               {"Name: " + game.name} <br/> {"Type: " + game.type_name} <br/> {"Created: " + game.creation_date}
             </p>))}</div>
           </div>
-          <button className="hub-button light-button">Join Private Game</button>
+          <button className="hub-button light-button" onClick={onJoinPrivateGameClick}>Join Private Game</button>
         </div>
       </div> 
     </div>
