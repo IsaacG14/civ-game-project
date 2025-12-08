@@ -3,13 +3,13 @@ import Popup from "./Popup";
 import TextInput from "./TextInput";
 
 type JoinPrivateGamePopupProps = {
-  onClose: () => void;
+  close: () => void;
 };
 
-export default function JoinPrivateGamePopup({ onClose }: JoinPrivateGamePopupProps) {
+export default function JoinPrivateGamePopup(props: JoinPrivateGamePopupProps) {
   const [inviteCode, setInviteCode] = useState("");
 
-  async function handleSubmit() {
+  async function submit() {
     const token = localStorage.getItem("token");
     if (!token) return;
 
@@ -31,8 +31,9 @@ export default function JoinPrivateGamePopup({ onClose }: JoinPrivateGamePopupPr
       }
 
       console.log("Joined game:", await res.json());
-      onClose();
-    } catch (err) {
+      props.close();
+    } 
+    catch (err) {
       console.error("Error joining game:", err);
     }
   }
@@ -42,8 +43,8 @@ export default function JoinPrivateGamePopup({ onClose }: JoinPrivateGamePopupPr
       id="join-private-game-popup"
       title="JOIN GAME"
       submitText="Join"
-      onSubmit={handleSubmit}
-      onClose={onClose}
+      submit={submit}
+      close={props.close}
     >
       <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
         <TextInput
@@ -53,10 +54,10 @@ export default function JoinPrivateGamePopup({ onClose }: JoinPrivateGamePopupPr
           setValue={(v: string) => {
             if (v.length <= 10) setInviteCode(v);
         }}
-          onEnterPress={handleSubmit}
+          onEnterPress={submit}
         />
 
-        <small style= {{ color: "white"}}>
+        <small style= {{ color: "var(--text-light)" }}>
             Enter the invite code given to you (max 10 characters)
         </small>
       </div>

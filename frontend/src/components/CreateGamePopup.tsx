@@ -3,7 +3,7 @@ import Popup from "./Popup";
 import TextInput from "./TextInput";
 
 type CreateGamePopupProps = {
-  onClose: () => void;
+  close: () => void;
 };
 
 type GameTypeInfo = {
@@ -12,7 +12,7 @@ type GameTypeInfo = {
   max_players: number;
 };
 
-export default function CreateGamePopup({ onClose }: CreateGamePopupProps) {
+export default function CreateGamePopup(props: CreateGamePopupProps) {
   const [gameTypes, setGameTypes] = useState<GameTypeInfo[]>([]);
   const [selectedGame, setSelectedGame] = useState<string>("");
   const [playerCount, setPlayerCount] = useState<number>(1);
@@ -21,35 +21,36 @@ export default function CreateGamePopup({ onClose }: CreateGamePopupProps) {
   const [startDate, setStartDate] = useState("");
 
   useEffect(() => {
-  async function loadGameTypes() {
-    const token = localStorage.getItem("token");
-    if (!token) return;
+    async function loadGameTypes() {
+      const token = localStorage.getItem("token");
+      if (!token) return;
 
-    try {
-      const res = await fetch("http://localhost:5000/api/game-types", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) {
-        console.error("Failed to fetch game types", await res.text());
-        return;
+      try {
+        const res = await fetch("http://localhost:5000/api/game-types", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) {
+          console.error("Failed to fetch game types", await res.text());
+          return;
+        }
+        const data: GameTypeInfo[] = await res.json();
+        setGameTypes(data);
+        if (data.length > 0) {
+          setSelectedGame(data[0].type_name);
+          setPlayerCount(data[0].min_players);
+        }
+      } 
+      catch (err) {
+        console.error("Error fetching game types:", err);
       }
-      const data: GameTypeInfo[] = await res.json();
-      setGameTypes(data);
-      if (data.length > 0) {
-        setSelectedGame(data[0].type_name);
-        setPlayerCount(data[0].min_players);
-      }
-    } catch (err) {
-      console.error("Error fetching game types:", err);
     }
-  }
 
-  loadGameTypes();
-}, []);
+    loadGameTypes();
+  }, []);
 
   const selectedInfo = gameTypes.find((g) => g.type_name === selectedGame);
 
-  async function handleSubmit() {
+  async function submit() {
     const token = localStorage.getItem("token");
     if (!token) return;
 
@@ -75,30 +76,27 @@ export default function CreateGamePopup({ onClose }: CreateGamePopupProps) {
       }
 
       console.log("Game created:", await res.json());
-      onClose();
+      props.close();
     } catch (err) {
       console.error("Error creating game:", err);
     }
   }
+
+  const lightTextStyle = { color: "var(--text-light)" };
 
   return (
     <Popup
       id="create-game-popup"
       title="CREATE GAME"
       submitText="Create"
-      onSubmit={handleSubmit}
-      onClose={onClose}
-    >
+      submit={submit}
+      close={props.close}>
       <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-        <TextInput
-          label="Game Name"
-          id="cg-name"
-          value={gameName}
-          setValue={setGameName}
-          onEnterPress={handleSubmit}
+        <TextInput label="Game Name" id="cg-name" value={gameName} setValue={setGameName}
+          onEnterPress={submit}
         />
 
-        <label style={{ color: "white" }}>
+        <label style={lightTextStyle}>
           Game Type:
           <select
             value={selectedGame}
@@ -117,7 +115,7 @@ export default function CreateGamePopup({ onClose }: CreateGamePopupProps) {
         </label>
 
         {selectedInfo && (
-          <label style={{ color: "white" }}>
+          <label style={lightTextStyle}>
             Number of Players:
             <input
               type="number"
@@ -132,20 +130,17 @@ export default function CreateGamePopup({ onClose }: CreateGamePopupProps) {
           </label>
         )}
 
-        <TextInput
-          label= "Invite Code (optional)"
-          id="invite-code"
-          value={inviteCode}
+        <TextInput label="Invite Code (optional)" id="invite-code" value={inviteCode}
           setValue={(v: string) => {
             if (v.length <= 10) setInviteCode(v);
           }}
-          onEnterPress={handleSubmit}
+          onEnterPress={submit}
         />
-        <small style={{ color: "white"}}>
+        <small style={lightTextStyle}>
           Enter a code to make the game private (max 10 characters)
         </small>
 
-        <label style={{ color: "white" }}>
+        <label style={lightTextStyle}>
           Start Date:
           <input
             type="datetime-local"
