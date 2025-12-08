@@ -147,8 +147,8 @@ export default function Hub() {
         onLogoutClick={logout}
       />
 
-      <CreateGamePopup onClick={onCreateGameClick}/>
-      <JoinPrivateGamePopup onClick={onJoinPrivateGameClick}/>
+      <CreateGamePopup onClose={onCreateGameClick}/>
+      <JoinPrivateGamePopup onClose={onJoinPrivateGameClick}/>
       
       <div className = "hubContent">
         <div className = "hubColumn">
