@@ -1,89 +1,84 @@
-Civ Game Project
+# Online Game Platform
 
-A simple Civilization-style game project using React (frontend), Flask (backend), and MySQL (database).
+A simple Online Game Platform built using:
 
-🚀 Getting Started
+- React (frontend)
+- Flask (backend)
+- MySQL (database)
+
+This project allows users to create and join game rooms through a simple web interface.
+
+Follow these steps to set up the entire project on your local machine.
+
+Getting Started
 1. Clone the Repository
 git clone <your-repo-url>
-cd CivGameProject
+cd OnlineGamePlatform
 
-2. Backend Setup (Flask + MySQL)
+2. Setup
+This setup is designed for Windows.
+If you are using a different platform, the setup process will differ.
 
-Navigate to the backend folder:
+Run the setup script
+This installs dependencies and prepares the environment:
+  setup.cmd
 
-cd backend
-
-
-Create and activate a virtual environment:
-
-python -m venv venv
-venv\Scripts\activate    # Windows
-source venv/bin/activate # Mac/Linux
-
-
-Install dependencies from requirements.txt:
-
-pip install -r requirements.txt
+Create your .env file:
+Copy the example environment file:
+  cp .env.example .env
 
 
-Copy .env.example to .env and fill in your database credentials:
-
-cp .env.example .env
-
+Fill in your MySQL database credentials:
 
 Example .env:
+  - DB_USER=your_username
+  - DB_PASSWORD=your_password_here
+  - DB_HOST=localhost
+  - DB_PORT=3306
+  - DB_NAME=game-platform
 
-DB_USER=civ_user
-DB_PASSWORD=your_password_here
-DB_HOST=localhost
-DB_PORT=3306
-DB_NAME=civ_game
+Make sure your MySQL server is running before starting the backend.
+Flask Backend
 
+The Flask API will run at:
+  http://127.0.0.1:5000
 
-Run the backend:
-
-flask run
-
-
-The Flask API will be available at http://127.0.0.1:5000
-.
+To start the backend server, use:
+  backend.cmd
 
 3. Frontend Setup (React)
+Open a new terminal and navigate to the frontend folder:
+  cd frontend
 
-Open a new terminal and navigate to frontend:
+  Install dependencies:
+  npm install
 
-cd frontend
-
-
-Install dependencies:
-
-npm install
-
-
-Start the React app:
-
-npm start
+  Start the React App:
+  npm start
 
 
-The app will open at http://localhost:3000
-.
+The app will automatically open at:
+  http://localhost:3000
 
-🛠 Tech Stack
 
-Frontend: React
+To simplify startup, you can also use:
+  frontend.cmd
 
-Backend: Flask
+# Summary of Commands
+|Task|Command|
+|---|---|
+|Full setup|setup.cmd|
+|Start backend (Flask)|backend.cmd|
+|Start frontend (React)|frontend.cmd|
+|Ensure MySQL server is running|(manual step)|
 
-Database: MySQL
-
-👥 Team Notes
+# Team Notes
 
 Never commit your real .env file — only .env.example should be shared.
 
 If you install a new Python package, update requirements.txt:
 
 pip freeze > requirements.txt
-
 
 If you install a new npm package, it will auto-update package.json.
 
