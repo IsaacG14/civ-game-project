@@ -21,8 +21,8 @@ function App()
         <div>
             <Router>
                 <Routes>
-                    <Route path="/" element={<Navigate to="/hub" />} />
-                    <Route path = "/login" element = {<LoginPage />} />
+                    {/* <Route path="/" element={<Navigate to="/hub" />} /> */}
+                    <Route path = "/" element = {<LoginPage />} />
                     <Route path = "/createAccount" element = {<CreateAccountPage />} />
                     <Route path = "/hub" element = {<Hub />} />
                     <Route path = "/account" element = {<Account />} />
