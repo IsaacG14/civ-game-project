@@ -350,6 +350,12 @@ def create_game():
     start_date = data.get("start_date")
     is_public = data.get("is_public")
     player_count = data.get("player_count")
+    invite_code = data.get("invite_code", "").strip()
+
+    if invite_code == "":
+        is_public = True
+    else:
+        is_public = False
 
     if not type_name or not name or not start_date:
         return jsonify({"message": "Missing fields"}), 400
@@ -372,7 +378,6 @@ def create_game():
         """, (user_id, game_id))
 
         #Unstarted_Game table
-        invite_code = f"{type_name[:3].upper()}{game_id}"
         cursor.execute("""
             INSERT INTO Unstarted_Game (game_id, invite_code, is_public)
             VALUES (%s, %s, %s);
@@ -391,8 +396,6 @@ def create_game():
     except Exception as e:
         print("Error creating game:", e)
         return jsonify({"message": "Server error creating game", "error": str(e)}), 500
-
-
 
 # Handles login attempts.
 @app.route("/log_in", methods=["POST"])

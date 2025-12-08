@@ -17,7 +17,7 @@ export default function CreateGamePopup({ onClose }: CreateGamePopupProps) {
   const [selectedGame, setSelectedGame] = useState<string>("");
   const [playerCount, setPlayerCount] = useState<number>(1);
   const [gameName, setGameName] = useState("");
-  const [isPrivate, setIsPrivate] = useState(false);
+  const [inviteCode, setInviteCode] = useState("");
   const [startDate, setStartDate] = useState("");
 
   useEffect(() => {
@@ -64,7 +64,7 @@ export default function CreateGamePopup({ onClose }: CreateGamePopupProps) {
           type_name: selectedGame,
           name: gameName,
           player_count: playerCount,
-          is_public: !isPrivate,
+          invite_code: inviteCode,
           start_date: startDate,
         }),
       });
@@ -132,14 +132,18 @@ export default function CreateGamePopup({ onClose }: CreateGamePopupProps) {
           </label>
         )}
 
-        <label style={{ color: "white" }}>
-          <input
-            type="checkbox"
-            checked={isPrivate}
-            onChange={(e) => setIsPrivate(e.target.checked)}
-          />
-          Private Game
-        </label>
+        <TextInput
+          label= "Invite Code (optional)"
+          id="invite-code"
+          value={inviteCode}
+          setValue={(v: string) => {
+            if (v.length <= 10) setInviteCode(v);
+          }}
+          onEnterPress={handleSubmit}
+        />
+        <small style={{ color: "white"}}>
+          Enter a code to make the game private (max 10 characters)
+        </small>
 
         <label style={{ color: "white" }}>
           Start Date:
