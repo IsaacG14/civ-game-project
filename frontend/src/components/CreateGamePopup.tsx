@@ -29,7 +29,7 @@ export default function CreateGamePopup(props: CreateGamePopupProps) {
       if (!token) return;
 
       try {
-        const res = await fetch("http://localhost:5000/api/game-types", {
+        const res = await fetch("http://3.143.222.205/api/game-types", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) {
@@ -58,7 +58,7 @@ export default function CreateGamePopup(props: CreateGamePopupProps) {
     if (!token) return;
 
     try {
-      const res = await fetch("http://localhost:5000/api/create-game", {
+      const res = await fetch("http://3.143.222.205/api/create-game", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
