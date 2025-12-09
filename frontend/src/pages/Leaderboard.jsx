@@ -12,7 +12,7 @@ export default function Leaderboard() {
   const[selectedGame, setSelectedGame] = useState("TicTacToe");
   
   useEffect(() => {
-    fetch(`http://3.143.222.205:5000/api/leaderboard/${selectedGame}`)
+    fetch(`http://localhost:5000/api/leaderboard/${selectedGame}`)
       .then(res => {
         if (!res.ok) throw new Error("Rejected request");
         return res.json();

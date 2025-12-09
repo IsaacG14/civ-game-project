@@ -19,7 +19,7 @@ export default function LoginPage() {
     if (!token) return;
 
     // Send token to backend for validity check.
-    fetch("http://3.143.222.205:5000/api/hub", {
+    fetch("http://localhost:5000/api/hub", {
       headers: { Authorization: "Bearer " + token },
     }) 
       // If there is a invalid response from backend return error message.
@@ -39,7 +39,7 @@ export default function LoginPage() {
     setError(null);
     
     // Send username and password to backend for check
-    fetch("http://3.143.222.205:5000/log_in", {
+    fetch("http://localhost:5000/log_in", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username: username, password: password})

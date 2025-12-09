@@ -32,7 +32,7 @@ export default function Account() {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    fetch("http://3.143.222.205:5000/api/get_player_info", {
+    fetch("http://localhost:5000/api/get_player_info", {
       headers: {
         Authorization: "Bearer " + token,
       },
@@ -49,7 +49,7 @@ export default function Account() {
         setUsername(data.username);
         setUserID(data.user_id);
         setEmail(data.email);
-      return fetch("http://3.143.222.205:5000/api/account/total_stats", {
+      return fetch("http://localhost:5000/api/account/total_stats", {
       headers: { Authorization: "Bearer " + token },
     });
   })
@@ -64,7 +64,7 @@ export default function Account() {
     setTotalWins(row.total_wins ?? 0);
     setTotalLosses(row.total_losses ?? 0);
     setTotalWinrate(row.total_winrate ?? 0);
-    return fetch("http://3.143.222.205:5000/api/account/game_stats", {
+    return fetch("http://localhost:5000/api/account/game_stats", {
       headers: { Authorization: "Bearer " + token },
     });
   })
@@ -95,7 +95,7 @@ export default function Account() {
 
     setError(null);
 
-    fetch("http://3.143.222.205:5000/change_email", {
+    fetch("http://localhost:5000/change_email", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -128,7 +128,7 @@ export default function Account() {
 
     setError(null);
 
-    fetch("http://3.143.222.205:5000/change_password", {
+    fetch("http://localhost:5000/change_password", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -168,7 +168,7 @@ export default function Account() {
   function handleDeleteAccount(e:any) {
     setError(null);
 
-    fetch("http://3.143.222.205:5000/delete_account", {
+    fetch("http://localhost:5000/delete_account", {
       method: "DELETE",
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token"),

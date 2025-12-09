@@ -47,7 +47,7 @@ export default function Hub() {
     }
 
     // If token does exists send to backend for validation.
-    fetch("http://3.143.222.205:5000/api/hub", {
+    fetch("http://localhost:5000/api/hub", {
       headers: {
         Authorization: "Bearer " + token,
       },
@@ -71,7 +71,7 @@ export default function Hub() {
       .then((games: Game[]) => setJoinableGames(games));
 
 
-    fetch("http://3.143.222.205:5000/api/joinable-games") 
+    fetch("http://localhost:5000/api/joinable-games") 
       .then(res => {
         if (!res.ok) throw new Error("Rejected request -- " + res.body);
         return res.json();
@@ -81,7 +81,7 @@ export default function Hub() {
         console.log(games);
         setJoinableGames(games);
       });
-    fetch("http://3.143.222.205:5000/api/current-games", {
+    fetch("http://localhost:5000/api/current-games", {
       headers: { Authorization: "Bearer " + token }
     }) 
       .then(res => {
