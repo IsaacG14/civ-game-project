@@ -1,3 +1,5 @@
+# USE THE DEMO BRANCH FOR TESTING ON YOUR LOCAL MACHINE
+
 # Online Game Platform
 
 A simple Online Game Platform built using:
