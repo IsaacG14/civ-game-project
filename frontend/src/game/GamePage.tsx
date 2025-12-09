@@ -8,7 +8,7 @@ import { eventNames, GAME_DATA_KEY, GameData } from "../constants";
 /** If your project is plain JS, remove the type annotations below. */
 
 async function fetchGameData(id: number): Promise<GameData | undefined> {
-  const res = await fetch(`http://localhost:5000/api/game/${id}`);
+  const res = await fetch(`http://3.143.222.205:5000/api/game/${id}`);
 
   if (!res.ok) {
     console.error("Server responded with failure", res);
