@@ -176,6 +176,67 @@ def query_db(query_template: str, params: list[any] | dict[str, any] = []):
             rows = cursor.fetchall()
     return rows
 
+@app.route("/api/update-stats", methods=["POST"])
+@require_jwt
+def update_stats():
+    """
+    Update the Has_Stats_For table for the logged-in user.
+    Expects JSON body: { "type_name": str, "result": "win"|"loss" }
+    """
+    user_id = request.user_id
+    data = request.get_json()
+
+    type_name = data.get("type_name")
+    result = data.get("result")
+
+    if not type_name or result not in ("win", "loss"):
+        return jsonify({"message": "Missing or invalid type_name/result"}), 400
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # Check if entry exists
+        cursor.execute("""
+            SELECT wins, losses
+            FROM Has_Stats_For
+            WHERE user_id = %s AND type_name = %s
+        """, (user_id, type_name))
+        row = cursor.fetchone()
+
+        if row:
+            # Update existing row
+            if result == "win":
+                cursor.execute("""
+                    UPDATE Has_Stats_For
+                    SET wins = wins + 1
+                    WHERE user_id = %s AND type_name = %s
+                """, (user_id, type_name))
+            else:
+                cursor.execute("""
+                    UPDATE Has_Stats_For
+                    SET losses = losses + 1
+                    WHERE user_id = %s AND type_name = %s
+                """, (user_id, type_name))
+        else:
+            # Insert new row if it doesn't exist
+            wins = 1 if result == "win" else 0
+            losses = 1 if result == "loss" else 0
+            cursor.execute("""
+                INSERT INTO Has_Stats_For (user_id, type_name, wins, losses)
+                VALUES (%s, %s, %s, %s)
+            """, (user_id, type_name, wins, losses))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return jsonify({"message": "Stats updated successfully"}), 200
+
+    except Exception as e:
+        print("Error updating stats:", e)
+        return jsonify({"message": "Server error updating stats", "error": str(e)}), 500
+
 
 @app.route("/api/joinable-games")
 def get_joinable_games():
