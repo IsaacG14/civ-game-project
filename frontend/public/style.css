@@ -371,13 +371,29 @@ header.navbar {
 
 
 /* Popup styles */
+.popup-backdrop {
+  background: rgb(0 0 0 / 0.3);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  z-index: 1;
+}
 .popup-dialog {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+
     background-color: var(--primary);
     border-radius: 12px;
     color: var(--text-light);
 
-    position: relative;
     padding: 40px 40px 20px 40px;
+
+    z-index: 2;
 }
 .close-icon {
     position: absolute;

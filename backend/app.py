@@ -193,7 +193,10 @@ def get_joinable_games():
                 U.invite_code, U.is_public, T.max_players
             HAVING COUNT(P.user_id) < T.max_players;    
             """)
-        return jsonify(value), 200
+        results = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return jsonify(results), 200
     except Exception as e:
         print("error at endpoint /api/joinable-games --", e)
         return jsonify({"error": str(e)}), 500
@@ -288,7 +291,7 @@ def get_game(id: int):
     try:
         value = query_db(
             """
-            SELECT * FROM Game WHERE gameID = %s
+            SELECT * FROM Game WHERE game_id = %s
             """, [id])
         if len(value) == 0:
             return "not found", 404
@@ -317,7 +320,171 @@ def hub_data():
         return jsonify({"message": "Token expired"}), 401
     except jwt.InvalidTokenError:
         return jsonify({"message": "Invalid token"}), 401
+    
+@app.route("/api/game-types", methods=["GET"])
+@require_jwt
+def get_game_types():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT type_name, min_players, max_players
+            FROM Game_Type;
+        """)
+        rows = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return jsonify(rows)
+    except Exception as e:
+        print("error -- ", {"error": str(e)})
+        return jsonify({"error": str(e)}), 500
 
+@app.route("/api/create-game", methods=["POST"])
+@require_jwt
+def create_game():
+    user_id = request.user_id
+
+    data = request.get_json()
+    type_name = data.get("type_name")
+    name = data.get("name")
+    start_date = data.get("start_date")
+    is_public = data.get("is_public")
+    player_count = data.get("player_count")
+    invite_code = data.get("invite_code", "").strip()
+
+    if invite_code == "":
+        is_public = True
+    else:
+        is_public = False
+
+    if not type_name or not name or not start_date:
+        return jsonify({"message": "Missing fields"}), 400
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        #Game table 
+        cursor.execute("""
+            INSERT INTO Game (type_name, name, creation_date, start_date, status)
+            VALUES (%s, %s, NOW(), %s, 'Unstarted');
+        """, (type_name, name, start_date))
+        game_id = cursor.lastrowid
+
+        #Plays table
+        cursor.execute("""
+            INSERT INTO Plays (user_id, game_id, resigned, score, `rank`)
+            VALUES (%s, %s, 0, 0, NULL);
+        """, (user_id, game_id))
+
+        #Unstarted_Game table
+        cursor.execute("""
+            INSERT INTO Unstarted_Game (game_id, invite_code, is_public)
+            VALUES (%s, %s, %s);
+        """, (game_id, invite_code, is_public))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return jsonify({
+            "message": "Game created",
+            "game_id": game_id,
+            "invite_code": invite_code
+        })
+
+    except Exception as e:
+        print("Error creating game:", e)
+        return jsonify({"message": "Server error creating game", "error": str(e)}), 500
+
+@app.route("/api/join-game", methods=["POST"])
+@require_jwt
+def join_game():
+    user_id = request.user_id
+
+    data = request.get_json()
+    invite_code = data.get("invite_code", "").strip()
+
+    if invite_code == "":
+        return jsonify({"message": "Invite code is required"}), 400
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        #Find matching invite code
+        cursor.execute("""
+            SELECT g.game_id, g.type_name
+            FROM Unstarted_Game u
+            JOIN Game g ON g.game_id = u.game_id
+            WHERE u.invite_code = %s
+              AND g.status = 'Unstarted';
+        """, (invite_code,))
+        game = cursor.fetchone()
+
+        if not game:
+            return jsonify({"message": "Invalid invite code or game already started"}), 404
+
+        game_id = game["game_id"]
+        type_name = game["type_name"]
+
+        #Check if user is already in the game
+        cursor.execute("""
+            SELECT 1
+            FROM Plays
+            WHERE user_id = %s AND game_id = %s;
+        """, (user_id, game_id))
+
+        if cursor.fetchone():
+            return jsonify({"message": "You are already in this game"}), 400
+
+        # Get max players
+        cursor.execute("""
+            SELECT max_players
+            FROM Game_Type
+            WHERE type_name = %s;
+        """, (type_name,))
+        row = cursor.fetchone()
+
+        if not row:
+            return jsonify({"message": "Game type not found"}), 500
+
+        max_players = row["max_players"]
+
+        #Count current players (using COUNT(user_id))
+        cursor.execute("""
+            SELECT COUNT(user_id) AS player_count
+            FROM Plays
+            WHERE game_id = %s;
+        """, (game_id,))
+        player_count = cursor.fetchone()["player_count"]
+
+        if player_count >= max_players:
+            return jsonify({"message": "This game is already full"}), 400
+
+        #Add player to the game
+        cursor.execute("""
+            INSERT INTO Plays (user_id, game_id, resigned, score, `rank`)
+            VALUES (%s, %s, 0, 0, NULL);
+        """, (user_id, game_id))
+
+        conn.commit()
+
+        return jsonify({
+            "message": "Joined game",
+            "game_id": game_id
+        })
+
+    except Exception as e:
+        print("Error joining game:", e)
+        return jsonify({"message": "Server error joining game", "error": str(e)}), 500
+
+    finally:
+        try:
+            cursor.close()
+            conn.close()
+        except:
+            pass
 
 # Handles login attempts.
 @app.route("/log_in", methods=["POST"])
