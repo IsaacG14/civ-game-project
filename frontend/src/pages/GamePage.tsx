@@ -1,6 +1,6 @@
 // GamePage.tsx
 import React, { ReactElement, useLayoutEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom"; // ✅ import useNavigate
 import createGame from "../game/gameConstructor";
 import { EventBus } from "../game/EventBus";
 import { eventNames, GAME_DATA_KEY, GameData } from "../constants";
@@ -12,7 +12,7 @@ async function fetchGameData(id: number): Promise<GameData | undefined> {
     return undefined;
   }
   const data = await res.json();
-  console.log("Fetched game data:", data); // 🔹 log the game type
+  console.log("Fetched game data:", data);
   return data;
 }
 
@@ -22,6 +22,8 @@ export default function GamePage(): ReactElement {
 
   const [gameData, setGameData] = useState<GameData | undefined>(undefined);
   const phaserRef = useRef<Phaser.Game | null>(null);
+
+  const navigate = useNavigate(); // ✅ add navigate
 
   useLayoutEffect(() => {
     if (!id) return;
@@ -33,17 +35,14 @@ export default function GamePage(): ReactElement {
         if (destroyed || !data) return;
         setGameData(data);
 
-        // Create Phaser game
         phaserRef.current = createGame("game-container");
 
-        // Immediately set registry so Preloader can switch scenes
         const g: any = phaserRef.current;
         if (g.registry && typeof g.registry.set === "function") {
           g.registry.set(GAME_DATA_KEY, data);
           console.log("Set game data in registry:", g.registry.get(GAME_DATA_KEY));
         }
 
-        // Emit update so Preloader triggers switchScene
         EventBus.emit(eventNames.GAME_DATA_UPDATED);
       })
       .catch(err => console.error("Failed to fetch game data:", err));
@@ -51,7 +50,6 @@ export default function GamePage(): ReactElement {
     return () => {
       destroyed = true;
 
-      // Destroy Phaser game on cleanup
       if (phaserRef.current) {
         try {
           phaserRef.current.destroy(true);
@@ -61,7 +59,6 @@ export default function GamePage(): ReactElement {
         phaserRef.current = null;
       }
 
-      // Remove event listeners
       try {
         EventBus.removeAllListeners();
       } catch {}
@@ -72,8 +69,8 @@ export default function GamePage(): ReactElement {
     <div
       className="fullScreen bg-gradient"
       style={{
-        width: "1024px",  // Fixed size for testing
-        height: "768px",  // Fixed size for testing
+        width: "1024px",
+        height: "768px",
         margin: "0 auto",
         display: "flex",
         flexDirection: "column",
@@ -81,6 +78,20 @@ export default function GamePage(): ReactElement {
       }}
     >
       <h1 style={{ margin: 8 }}>Game #{id}</h1>
+
+      {/* Button to navigate back to hub */}
+      <button
+        onClick={() => navigate("/hub")}
+        style={{
+          margin: "8px 0",
+          padding: "8px 16px",
+          fontSize: "16px",
+          cursor: "pointer",
+        }}
+      >
+        Back to Hub
+      </button>
+
       <div
         id="game-container"
         style={{ width: "100%", height: "100%", border: "1px solid #000" }}
