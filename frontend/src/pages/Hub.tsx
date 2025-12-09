@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import CreateGamePopup from "../components/CreateGamePopup";
 import JoinPrivateGamePopup from "../components/JoinPrivateGamePopup";
+import GameListBox from "../components/GameListBox";
 
 export default function Hub() {
   const navigate = useNavigate();
@@ -133,28 +134,12 @@ export default function Hub() {
       
       <div className = "hubContent">
         <div className = "hubColumn">
-          <div className = "hubBox">
-            <h2 className = "formHeader">Current Games</h2>
-            {currentGames.length === 0 ? (
-              <p>No Current Games</p>
-            ) : (
-              currentGames.map(game => (
-                <p key={game.game_id}>
-                  {"Name: " + game.name} <br /> {"Type: " + game.type_name} <br /> {"Created: " + game.creation_date}
-                </p>
-              ))
-            )}
-          </div>
+          <GameListBox gameList={currentGames} title="Ongoing Games"/>
           <button className="hub-button light-button" onClick={() => setIsCreatePopupOpen(true)}>Create Game</button>
         </div>
 
         <div className = "hubColumn">
-          <div className = "hubBox">
-            <h2 className = "formHeader">Joinable Games</h2>
-            <div>{joinableGames.map(game => (<p key={game.game_id}>
-              {"Name: " + game.name} <br/> {"Type: " + game.type_name} <br/> {"Created: " + game.creation_date}
-            </p>))}</div>
-          </div>
+          <GameListBox gameList={joinableGames} title="Joinable Games" />
           <button className="hub-button light-button" onClick={() => setIsJoinPopupOpen(true)}>Join Private Game</button>
         </div>
       </div> 
