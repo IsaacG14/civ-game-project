@@ -20,7 +20,7 @@ export default function CreateAccountPage() {
 
     setError(null);
     
-    fetch("http://localhost:5000/sign_up", {
+    fetch("http://3.143.222.205:5000/sign_up", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username: username, email: email, password: password })

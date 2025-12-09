@@ -6,14 +6,21 @@ import { EventBus } from "../game/EventBus";
 import { eventNames, GAME_DATA_KEY, GameData } from "../constants";
 
 async function fetchGameData(id: number): Promise<GameData | undefined> {
-  const res = await fetch(`http://localhost:5000/api/game/${id}`);
-  if (!res.ok) {
-    console.error("Server responded with failure", res);
-    return undefined;
-  }
-  const data = await res.json();
-  console.log("Fetched game data:", data);
-  return data;
+
+    const res = await fetch(`http://3.143.222.205:5000/api/game-${id}`);
+
+    if (!res.ok) {
+        console.error('Server responded with failure', res);
+        if (res.status === 404) {
+            return undefined;
+        }
+        else {
+            throw new Error(`Request failed: ${res.status} ${res.statusText}`);
+        }
+    }
+
+    const g = await res.json();
+    return g;
 }
 
 export default function GamePage(): ReactElement {

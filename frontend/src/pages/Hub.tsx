@@ -46,8 +46,11 @@ export default function Hub() {
       return;
     }
 
-    fetch("http://localhost:5000/api/hub", {
-      headers: { Authorization: "Bearer " + token },
+    // If token does exists send to backend for validation.
+    fetch("http://3.143.222.205:5000/api/hub", {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
     })
       .then(res => {
         if (!res.ok) throw new Error("Unauthorized");
@@ -60,18 +63,38 @@ export default function Hub() {
       .catch(err => {
         console.error(err);
         localStorage.removeItem("token");
-        navigate("/login");
+        navigate("/");
       });
 
     fetch("http://localhost:5000/api/joinable-games")
       .then(res => res.json())
       .then((games: Game[]) => setJoinableGames(games));
 
-    fetch("http://localhost:5000/api/current-games", {
-      headers: { Authorization: "Bearer " + token },
-    })
-      .then(res => res.json())
-      .then((games: Game[]) => setCurrentGames(games));
+
+    fetch("http://3.143.222.205:5000/api/joinable-games") 
+      .then(res => {
+        if (!res.ok) throw new Error("Rejected request -- " + res.body);
+        return res.json();
+      })
+      // If there is a valid response navigate to hub.
+      .then(games => {
+        console.log(games);
+        setJoinableGames(games);
+      });
+    fetch("http://3.143.222.205:5000/api/current-games", {
+      headers: { Authorization: "Bearer " + token }
+    }) 
+      .then(res => {
+        if (!res.ok) throw new Error("Rejected request");
+        return res.json();
+      })
+      // If there is a valid response navigate to hub.
+      .then(games => {
+        console.log(games);
+        setCurrentGames(games);
+      });
+
+
   }, [navigate]);
 
   function logout() {
