@@ -1,10 +1,9 @@
-import { ReactElement, useEffect, useLayoutEffect, useRef, useState } from "react";
-import TextInput from "../components/TextInput";
+// GamePage.tsx
+import React, { ReactElement, useLayoutEffect, useRef, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom"; // ✅ import useNavigate
 import createGame from "../game/gameConstructor";
 import { EventBus } from "../game/EventBus";
 import { eventNames, GAME_DATA_KEY, GameData } from "../constants";
-
-
 
 async function fetchGameData(id: number): Promise<GameData | undefined> {
 
@@ -24,76 +23,86 @@ async function fetchGameData(id: number): Promise<GameData | undefined> {
     return g;
 }
 
-
 export default function GamePage(): ReactElement {
+  const { id: idParam } = useParams<{ id: string }>();
+  const id = idParam ? Number(idParam) : undefined;
 
-    const [idText, setIdText] = useState<string>("");
-    const [id, setId] = useState<number>();
-    
-    const [gameData, setGameData] = useState<GameData>();
-    const gameDataRef = useRef<GameData | undefined>(gameData);
+  const [gameData, setGameData] = useState<GameData | undefined>(undefined);
+  const phaserRef = useRef<Phaser.Game | null>(null);
 
-    // this reference will survive across re-renders
-    const phaserRef = useRef<Phaser.Game | null>(null);
+  const navigate = useNavigate(); // ✅ add navigate
 
+  useLayoutEffect(() => {
+    if (!id) return;
 
-    // Emit updated game data to Phaser whenever it changes
-    useEffect(() => {
-        gameDataRef.current = gameData;
-        phaserRef.current?.registry.set(GAME_DATA_KEY, gameData);
-    }, [gameData]);
+    let destroyed = false;
 
+    fetchGameData(id)
+      .then(data => {
+        if (destroyed || !data) return;
+        setGameData(data);
 
-    // useLayoutEffect is called after all previously scheduled DOM changes occur,
-    // so we can rely on there being a game container element
-    useLayoutEffect(() => {
-        // this code is run every time the id changes
+        phaserRef.current = createGame("game-container");
 
-        if (id === undefined) return;
-
-        // add a listener to the done-loading event that calls onDoneLoading
-        EventBus.on(eventNames.DONE_LOADING, onDoneLoading);
-
-        fetchGameData(id)
-        .then(g => {
-            setGameData(g);
-            if (g === undefined) return;
-
-            phaserRef.current = createGame("game-container");
-        });
-
-
-        return () => {
-            if (phaserRef.current) {
-                phaserRef.current.destroy(true);
-                phaserRef.current = null;
-                EventBus.removeAllListeners();
-            }
+        const g: any = phaserRef.current;
+        if (g.registry && typeof g.registry.set === "function") {
+          g.registry.set(GAME_DATA_KEY, data);
+          console.log("Set game data in registry:", g.registry.get(GAME_DATA_KEY));
         }
-    }, [id]);
 
-    
-    function onDoneLoading(scene_instance: Phaser.Scene): void {
-        scene_instance.registry.set(GAME_DATA_KEY, gameDataRef.current);
         EventBus.emit(eventNames.GAME_DATA_UPDATED);
-    }
-    
+      })
+      .catch(err => console.error("Failed to fetch game data:", err));
 
-    return (
-        <div>
-            <h1>Game</h1>
+    return () => {
+      destroyed = true;
 
-            {/* <TextInput id="idText" label="Game ID" value={idText} setValue={setIdText} /> */}
+      if (phaserRef.current) {
+        try {
+          phaserRef.current.destroy(true);
+        } catch (e) {
+          console.warn("Phaser destroy error:", e);
+        }
+        phaserRef.current = null;
+      }
 
-            <button type="button" onClick={_=>setId(+idText)}>Get Game</button>
+      try {
+        EventBus.removeAllListeners();
+      } catch {}
+    };
+  }, [id]);
 
-            <p>{gameData ? (`${gameData.gameID}. ${gameData.name}: ${gameData.status} ${gameData.typeName} game`) : ""}</p>
+  return (
+    <div
+      className="fullScreen bg-gradient"
+      style={{
+        width: "1024px",
+        height: "768px",
+        margin: "0 auto",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <h1 style={{ margin: 8 }}>Game #{id}</h1>
 
-            <div id="game-container"/>
-            
-            <button type="button" onClick={
-                () => setGameData(x => x ? {...x} : undefined)
-            }>Update Name</button>
-        </div>
-    );
+      {/* Button to navigate back to hub */}
+      <button
+        onClick={() => navigate("/hub")}
+        style={{
+          margin: "8px 0",
+          padding: "8px 16px",
+          fontSize: "16px",
+          cursor: "pointer",
+        }}
+      >
+        Back to Hub
+      </button>
+
+      <div
+        id="game-container"
+        style={{ width: "100%", height: "100%", border: "1px solid #000" }}
+      />
+    </div>
+  );
 }

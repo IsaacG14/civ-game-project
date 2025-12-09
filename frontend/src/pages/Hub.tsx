@@ -1,39 +1,48 @@
-/*
-Required installs:
-
-npm install react react-dom react-router-dom
-*/
-
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import CreateGamePopup from "../components/CreateGamePopup";
 import JoinPrivateGamePopup from "../components/JoinPrivateGamePopup";
 
+// Define the shape of a game from your backend
+interface Game {
+  game_id: number;
+  name: string;
+  type_name: string;
+  creation_date: string;
+  status: string;
+  invite_code: string;
+  is_public: number;
+  current_players: number;
+}
+
+interface HubData {
+  // define any fields your hub endpoint returns, or use unknown
+  [key: string]: any;
+}
+
 export default function Hub() {
   const navigate = useNavigate();
 
-  // Display for loading screen when credentials are submitted. True for initial page load.
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [hubData, setHubData] = useState<HubData | null>(null);
+  const [joinableGames, setJoinableGames] = useState<Game[]>([]);
+  const [currentGames, setCurrentGames] = useState<Game[]>([]);
 
-  // Data from backend to be displayed on screen.
-  const [hubData, setHubData] = useState(null);
+  const [isCreatePopupOpen, setIsCreatePopupOpen] = useState<boolean>(false);
+  const [isJoinPopupOpen, setIsJoinPopupOpen] = useState<boolean>(false);
 
-  const [joinableGames, setJoinableGames] = useState([]);
-  const [currentGames, setCurrentGames] = useState([]);
+  // navigate to game screen by ID
+  function goToGame(gameId: number) {
+    navigate(`/game/${gameId}`);
+  }
 
-  const [isCreatePopupOpen, setIsCreatePopupOpen] = useState(false);
-  const [isJoinPopupOpen, setIsJoinPopupOpen] = useState(false);
-
-
-  // When page loads, check for token validity. If invalid token send user to login page.
+  // on mount — validate token, fetch hub & games
   useEffect(() => {
-    // Get token from local storage.
     const token = localStorage.getItem("token");
 
-    // If token does not exists send user to login.
     if (!token) {
-      navigate("/login");
+      navigate("/");
       return;
     }
 
@@ -43,23 +52,23 @@ export default function Hub() {
         Authorization: "Bearer " + token,
       },
     })
-      // If response is an error, token is invalid, return error.
       .then(res => {
         if (!res.ok) throw new Error("Unauthorized");
         return res.json();
       })
-      // If response is valid, display data from backend and finish loading.
-      .then(data => {
+      .then((data: HubData) => {
         setHubData(data);
         setLoading(false);
       })
-      // On error, display error, remove token from local storage, and send user to login.
       .catch(err => {
         console.error(err);
         localStorage.removeItem("token");
-        navigate("/login");
+        navigate("/");
       });
 
+    fetch("http://localhost:5000/api/joinable-games")
+      .then(res => res.json())
+      .then((games: Game[]) => setJoinableGames(games));
 
 
     fetch("http://3.143.222.205:5000/api/joinable-games") 
@@ -88,20 +97,19 @@ export default function Hub() {
 
   }, [navigate]);
 
-
-  // Deletes token from local storage and sends user to login page on button click.
   function logout() {
     localStorage.removeItem("token");
     navigate("/login");
   }
+
   function accountInfo() {
     navigate("/account");
   }
+
   function leaderboard() {
     navigate("/leaderboard");
   }
 
-  // Display on loading.
   if (loading) {
     return (
       <div
@@ -119,8 +127,8 @@ export default function Hub() {
   }
 
   return (
-    <div className="fullScreen bg-gradient" style = {{ flexDirection: "column" }}>
-      <Navbar 
+    <div className="fullScreen bg-gradient" style={{ flexDirection: "column" }}>
+      <Navbar
         onClickButton={accountInfo}
         clickButtonText="Account"
         onClickButton2={leaderboard}
@@ -128,36 +136,63 @@ export default function Hub() {
         onLogoutClick={logout}
       />
 
-      { isJoinPopupOpen && <JoinPrivateGamePopup close={() => setIsJoinPopupOpen(false)}/> }
-      { isCreatePopupOpen && <CreateGamePopup close={() => setIsCreatePopupOpen(false)}/> }
-      
-      <div className = "hubContent">
-        <div className = "hubColumn">
-          <div className = "hubBox">
-            <h2 className = "formHeader">Current Games</h2>
+      {isJoinPopupOpen && <JoinPrivateGamePopup close={() => setIsJoinPopupOpen(false)} />}
+      {isCreatePopupOpen && <CreateGamePopup close={() => setIsCreatePopupOpen(false)} />}
+
+      <div className="hubContent">
+        {/* Current Games */}
+        <div className="hubColumn">
+          <div className="hubBox">
+            <h2 className="formHeader">Current Games</h2>
             {currentGames.length === 0 ? (
               <p>No Current Games</p>
             ) : (
               currentGames.map(game => (
                 <p key={game.game_id}>
-                  {"Name: " + game.name} <br /> {"Type: " + game.type_name} <br /> {"Created: " + game.creation_date}
+                  {"Name: " + game.name} <br />
+                  {"Type: " + game.type_name} <br />
+                  {"Created: " + game.creation_date}
                 </p>
               ))
             )}
           </div>
-          <button className="hub-button light-button" onClick={() => setIsCreatePopupOpen(true)}>Create Game</button>
+          <button className="hub-button light-button" onClick={() => setIsCreatePopupOpen(true)}>
+            Create Game
+          </button>
         </div>
 
-        <div className = "hubColumn">
-          <div className = "hubBox">
-            <h2 className = "formHeader">Joinable Games</h2>
-            <div>{joinableGames.map(game => (<p key={game.game_id}>
-              {"Name: " + game.name} <br/> {"Type: " + game.type_name} <br/> {"Created: " + game.creation_date}
-            </p>))}</div>
+        {/* Joinable Games */}
+        <div className="hubColumn">
+          <div className="hubBox">
+            <h2 className="formHeader">Joinable Games</h2>
+
+            <div>
+              {joinableGames.map(game => (
+                <div
+                  key={game.game_id}
+                  onClick={() => goToGame(game.game_id)}
+                  style={{
+                    cursor: "pointer",
+                    padding: "10px",
+                    borderBottom: "1px solid #ccc",
+                    transition: "background 0.2s",
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.1)")}
+                  onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+                >
+                  <strong>{game.name}</strong> <br />
+                  {"Type: " + game.type_name} <br />
+                  {"Created: " + game.creation_date}
+                </div>
+              ))}
+            </div>
           </div>
-          <button className="hub-button light-button" onClick={() => setIsJoinPopupOpen(true)}>Join Private Game</button>
+
+          <button className="hub-button light-button" onClick={() => setIsJoinPopupOpen(true)}>
+            Join Private Game
+          </button>
         </div>
-      </div> 
+      </div>
     </div>
   );
 }

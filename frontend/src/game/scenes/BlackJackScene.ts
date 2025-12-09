@@ -117,12 +117,64 @@ export default class BlackjackScene extends Phaser.Scene {
         }
 
         // Determine winner
-        if (this.state.dealerScore > 21) this.endGame("Dealer Busts! Player Wins!");
-        else if (this.state.dealerScore > this.state.playerScore) this.endGame("Dealer Wins!");
-        else if (this.state.dealerScore < this.state.playerScore) this.endGame("Player Wins!");
-        else this.endGame("Draw!");
+        let message = "";
+        if (this.state.dealerScore > 21) message = "Dealer Busts! Player Wins!";
+        else if (this.state.dealerScore > this.state.playerScore) message = "Dealer Wins!";
+        else if (this.state.dealerScore < this.state.playerScore) message = "Player Wins!";
+        else message = "Draw!";
+
+        this.endGame(message);
+
+        // Register win in database if player wins
+        if (message.includes("Player Wins")) {
+            this.registerWin();
+        } 
+        if (message.includes("Dealer Wins")) {
+            this.registerLoss();
+        } 
 
         this.updateUI();
+    }
+
+    private async registerWin() {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) return;
+
+            await fetch("http://localhost:5000/api/update-stats", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    type_name: "Blackjack",
+                    result: "win"
+                })
+            });
+        } catch (err) {
+            console.error("Error updating stats:", err);
+        }
+    }
+    private async registerLoss() {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) return;
+
+            await fetch("http://localhost:5000/api/update-stats", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    type_name: "Blackjack",
+                    result: "loss"
+                })
+            });
+        } catch (err) {
+            console.error("Error updating stats:", err);
+        }
     }
 
     private endGame(message: string) {

@@ -1,12 +1,12 @@
-export type GameData = {
-    gameID: number;
-    typeName: string;
+export interface GameData {
+    counts_towards_leaderboard: number;
+    creation_date: string;
+    game_id: number;
     name: string;
-    creationDate: Date;
-    startDate: Date;
-    countsTowardLeaderboard: boolean;
-    status: 'Unstarted' | 'Ongoing' | 'Finished';
-};
+    start_date: string;
+    status: string;
+    type_name: string; // match API exactly
+}
 
 export const GAME_DATA_KEY = "game-data";
 

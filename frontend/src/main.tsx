@@ -27,7 +27,7 @@ function App()
                     <Route path = "/hub" element = {<Hub />} />
                     <Route path = "/account" element = {<Account />} />
                     <Route path = "/leaderboard" element = {<Leaderboard />} />
-                    <Route path = "/game" element = {<GamePage />} />
+                    <Route path = "/game/:id" element = {<GamePage />} />
                 </Routes>
             </Router>
         </div>
