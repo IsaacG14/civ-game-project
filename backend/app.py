@@ -564,7 +564,7 @@ def log_in():
     try:
         cursor = conn.cursor()
         # Use parameterized query to avoid SQL injection
-        cursor.execute("SELECT user_id, password_hash FROM user WHERE username = %s", (username,))        
+        cursor.execute("SELECT user_id, password_hash FROM User WHERE username = %s", (username,))        
         row = cursor.fetchone()
         if row:
             id = row[0]
@@ -614,7 +614,7 @@ def sign_up():
         cursor = conn.cursor()
         # Parameterized query prevents SQL injection
         cursor.execute(
-            "INSERT INTO user (username, email, password_hash) VALUES (%s, %s, %s)",
+            "INSERT INTO User (username, email, password_hash) VALUES (%s, %s, %s)",
             (username, email, password)
         )
         conn.commit()
