@@ -8,7 +8,7 @@ import { eventNames, GAME_DATA_KEY, GameData } from "../constants";
 
 async function fetchGameData(id: number): Promise<GameData | undefined> {
 
-    const res = await fetch(`http://localhost:5000/api/game-${id}`);
+    const res = await fetch(`http://3.143.222.205:5000/api/game-${id}`);
 
     if (!res.ok) {
         console.error('Server responded with failure', res);
@@ -83,7 +83,7 @@ export default function GamePage(): ReactElement {
         <div>
             <h1>Game</h1>
 
-            <TextInput id="idText" label="Game ID" value={idText} setValue={setIdText} />
+            {/* <TextInput id="idText" label="Game ID" value={idText} setValue={setIdText} /> */}
 
             <button type="button" onClick={_=>setId(+idText)}>Get Game</button>
 
