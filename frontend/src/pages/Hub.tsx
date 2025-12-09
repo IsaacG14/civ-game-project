@@ -6,9 +6,9 @@ npm install react react-dom react-router-dom
 
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import Navbar from "../components/Navbar"
-import Popup from "../components/Popup";
-import TextInput from "../components/TextInput";
+import Navbar from "../components/Navbar";
+import CreateGamePopup from "../components/CreateGamePopup";
+import JoinPrivateGamePopup from "../components/JoinPrivateGamePopup";
 
 export default function Hub() {
   const navigate = useNavigate();
@@ -20,8 +20,11 @@ export default function Hub() {
   const [hubData, setHubData] = useState(null);
 
   const [joinableGames, setJoinableGames] = useState([]);
-
   const [currentGames, setCurrentGames] = useState([]);
+
+  const [isCreatePopupOpen, setIsCreatePopupOpen] = useState(false);
+  const [isJoinPopupOpen, setIsJoinPopupOpen] = useState(false);
+
 
   // When page loads, check for token validity. If invalid token send user to login page.
   useEffect(() => {
@@ -86,17 +89,6 @@ export default function Hub() {
   }, [navigate]);
 
 
-  function onCreateGameClick(e) {
-    document.querySelector("#create-game-popup").showModal();
-  }
-  function onCreateGameClose(e) {
-    document.querySelector("#create-game-text-input").value = "";
-  }
-  function onCreateGameSubmit(e) {
-    document.querySelector("#create-game-text-input").value = "";
-  }
-
-
   // Deletes token from local storage and sends user to login page on button click.
   function logout() {
     localStorage.removeItem("token");
@@ -136,14 +128,8 @@ export default function Hub() {
         onLogoutClick={logout}
       />
 
-      <Popup id="create-game-popup" title="CREATE GAME" submitText="Create" 
-          onSubmit={onCreateGameSubmit} 
-          onClose={onCreateGameClose}>
-        <p>Create a game here eventually.</p>
-        <p>Sample text 1</p>
-        <TextInput label="Input Field" id="create-game-text-input" onEnterPress={onCreateGameSubmit}/>
-        <p>Sample text 2</p>
-      </Popup>
+      { isJoinPopupOpen && <JoinPrivateGamePopup close={() => setIsJoinPopupOpen(false)}/> }
+      { isCreatePopupOpen && <CreateGamePopup close={() => setIsCreatePopupOpen(false)}/> }
       
       <div className = "hubContent">
         <div className = "hubColumn">
@@ -159,17 +145,17 @@ export default function Hub() {
               ))
             )}
           </div>
-          <button className="hub-button light-button" onClick={onCreateGameClick}>Create Game</button>
+          <button className="hub-button light-button" onClick={() => setIsCreatePopupOpen(true)}>Create Game</button>
         </div>
 
         <div className = "hubColumn">
           <div className = "hubBox">
             <h2 className = "formHeader">Joinable Games</h2>
-            <div>{joinableGames.map(game => (<p key={game.gameID}>
+            <div>{joinableGames.map(game => (<p key={game.game_id}>
               {"Name: " + game.name} <br/> {"Type: " + game.type_name} <br/> {"Created: " + game.creation_date}
             </p>))}</div>
           </div>
-          <button className="hub-button light-button">Join Private Game</button>
+          <button className="hub-button light-button" onClick={() => setIsJoinPopupOpen(true)}>Join Private Game</button>
         </div>
       </div> 
     </div>
