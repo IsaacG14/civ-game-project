@@ -79,7 +79,7 @@ export default function Account() {
 
   function logout() {
     localStorage.removeItem("token");
-    navigate("/login");
+    navigate("/");
   
   }
   function leaderboard() {
