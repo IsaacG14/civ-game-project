@@ -10,6 +10,10 @@ interface Game {
   name: string;
   type_name: string;
   creation_date: string;
+  status: string;
+  invite_code: string;
+  is_public: number;
+  current_players: number;
 }
 
 interface HubData {
