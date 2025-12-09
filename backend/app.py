@@ -245,10 +245,10 @@ def get_joinable_games():
         cursor = conn.cursor(dictionary=True)
         cursor.execute("""
             SELECT G.game_id, G.type_name, G.name, G.creation_date, G.status, U.invite_code, U.is_public, COUNT(P.user_id) AS current_players
-            FROM game as G
-            JOIN unstarted_game as U on G.game_id = U.game_id
-            JOIN game_type as T on G.type_name = T.type_name
-            LEFT JOIN plays as P on P.game_id = G.game_id
+            FROM Game as G
+            JOIN Unstarted_Game as U on G.game_id = U.game_id
+            JOIN Game_Type as T on G.type_name = T.type_name
+            LEFT JOIN Plays as P on P.game_id = G.game_id
             WHERE U.is_public = 1
             GROUP BY G.game_id, G.type_name, G.name, G.creation_date, G.status, 
                 U.invite_code, U.is_public, T.max_players
@@ -315,7 +315,7 @@ def get_stats():
         cursor.execute("""
             SELECT SUM(wins) AS total_wins, SUM(losses) AS total_losses, 
                        ROUND(SUM(wins) * 1.0/ (SUM(wins) + SUM(losses)) * 100, 2) AS total_winrate
-            FROM has_stats_for
+            FROM Has_Stats_For
             WHERE user_id = %s;
             """, (user_id,))
         rows = cursor.fetchall()
@@ -336,7 +336,7 @@ def get_specific_stats():
         cursor.execute("""
             SELECT type_name, wins, losses,
                        ROUND(wins * 1.0/ (wins + losses) * 100, 2) AS winrate
-            FROM has_stats_for
+            FROM Has_Stats_For
             WHERE user_id = %s;
             """, (user_id,))
         rows = cursor.fetchall()
