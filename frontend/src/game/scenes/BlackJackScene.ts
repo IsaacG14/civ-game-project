@@ -141,7 +141,7 @@ export default class BlackjackScene extends Phaser.Scene {
             const token = localStorage.getItem("token");
             if (!token) return;
 
-            await fetch("http://localhost:5000/api/update-stats", {
+            await fetch("http://3.143.222.205:5000/api/update-stats", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -161,7 +161,7 @@ export default class BlackjackScene extends Phaser.Scene {
             const token = localStorage.getItem("token");
             if (!token) return;
 
-            await fetch("http://localhost:5000/api/update-stats", {
+            await fetch("http://3.143.222.205:5000/api/update-stats", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
