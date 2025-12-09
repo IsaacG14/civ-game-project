@@ -132,6 +132,9 @@ export default class BlackjackScene extends Phaser.Scene {
         if (message.includes("Dealer Wins")) {
             this.registerLoss();
         } 
+         if (message.includes("Dealer Busts! Player Wins!")) {
+            this.registerLoss();
+        } 
 
         this.updateUI();
     }
