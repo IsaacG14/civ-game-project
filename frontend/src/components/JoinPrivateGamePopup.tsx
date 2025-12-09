@@ -16,7 +16,7 @@ export default function JoinPrivateGamePopup(props: JoinPrivateGamePopupProps) {
     if (!token) return;
 
     try {
-      const res = await fetch("http://localhost:5000/api/join-game", {
+      const res = await fetch("http://3.143.222.205/join-game", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
