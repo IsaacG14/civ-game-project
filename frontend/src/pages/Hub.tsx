@@ -66,7 +66,7 @@ export default function Hub() {
         navigate("/");
       });
 
-    fetch("http://localhost:5000/api/joinable-games")
+    fetch("http://3.143.222.205:5000/api/joinable-games")
       .then(res => res.json())
       .then((games: Game[]) => setJoinableGames(games));
 
