@@ -99,7 +99,7 @@ export default function Hub() {
 
   function logout() {
     localStorage.removeItem("token");
-    navigate("/login");
+    navigate("/");
   }
 
   function accountInfo() {
