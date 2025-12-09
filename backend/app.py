@@ -182,7 +182,7 @@ def get_joinable_games():
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("""
+        '''cursor.execute("""
             SELECT G.game_id, G.type_name, G.name, G.creation_date, G.status, U.invite_code, U.is_public, COUNT(P.user_id) AS current_players
             FROM game as G
             JOIN unstarted_game as U on G.game_id = U.game_id
@@ -192,7 +192,12 @@ def get_joinable_games():
             GROUP BY G.game_id, G.type_name, G.name, G.creation_date, G.status, 
                 U.invite_code, U.is_public, T.max_players
             HAVING COUNT(P.user_id) < T.max_players;    
-            """)
+            """)'''
+        cursor.execute("""
+            SELECT G.game_id, G.type_name, G.name, G.creation_date, G.status, U.invite_code, U.is_public
+            FROM game AS G
+            JOIN unstarted_game AS U ON G.game_id = U.game_id
+        """)
         results = cursor.fetchall()
         cursor.close()
         conn.close()
@@ -286,7 +291,7 @@ def get_specific_stats():
         print("error -- ", {"error": str(e)})
         return jsonify({"error": str(e)}), 500
 
-@app.route("/api/game-<int:id>")
+@app.route("/api/game/<int:id>")
 def get_game(id: int):
     try:
         value = query_db(
