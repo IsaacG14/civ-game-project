@@ -26,7 +26,7 @@ export default function Leaderboard() {
 
   function logout() {
     localStorage.removeItem("token");
-    navigate("/login");
+    navigate("/");
   }
   function accountInfo() {
     navigate("/account");

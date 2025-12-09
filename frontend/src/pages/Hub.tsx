@@ -38,7 +38,7 @@ export default function Hub() {
     const token = localStorage.getItem("token");
 
     if (!token) {
-      navigate("/login");
+      navigate("/");
       return;
     }
 
@@ -56,7 +56,7 @@ export default function Hub() {
       .catch(err => {
         console.error(err);
         localStorage.removeItem("token");
-        navigate("/login");
+        navigate("/");
       });
 
     fetch("http://localhost:5000/api/joinable-games")
@@ -72,7 +72,7 @@ export default function Hub() {
 
   function logout() {
     localStorage.removeItem("token");
-    navigate("/login");
+    navigate("/");
   }
 
   function accountInfo() {
