@@ -11,6 +11,7 @@ import CreateGamePopup from "../components/CreateGamePopup";
 import JoinPrivateGamePopup from "../components/JoinPrivateGamePopup";
 import GameListBox from "../components/GameListBox";
 import JoinableGameDetailPopup from "../components/JoinableGameDetailPopup";
+import RegisteredGameDetailPopup from "../components/RegisteredGameDetailPopup";
 import OngoingGameDetailPopup from "../components/OngoingGameDetailPopup";
 import { DB_Game } from "../db-types";
 
@@ -23,12 +24,14 @@ export default function Hub() {
   const [loading, setLoading] = useState(true);
 
   const [joinableGames, setJoinableGames] = useState<JoinableGame[]>([]);
-  const [currentGames, setCurrentGames] = useState<DB_Game[]>([]);
+  const [registeredGames, setRegisteredGames] = useState<JoinableGame[]>([]);
+  const [ongoingGames, setOngoingGames] = useState<DB_Game[]>([]);
 
   const [isCreatePopupOpen, setIsCreatePopupOpen] = useState(false);
   const [isJoinPopupOpen, setIsJoinPopupOpen] = useState(false);
 
   const [selectedJoinableGame, setSelectedJoinableGame] = useState<JoinableGame | null>(null);
+  const [selectedRegisteredGame, setSelectedRegisteredGame] = useState<JoinableGame | null>(null);
   const [selectedOngoingGame, setSelectedOngoingGame] = useState<DB_Game | null>(null);
   
 
@@ -88,7 +91,18 @@ export default function Hub() {
       // If there is a valid response navigate to hub.
       .then((games: DB_Game[]) => {
         console.log(games);
-        setCurrentGames(games);
+        setOngoingGames(games);
+      });
+    fetch("http://localhost:5000/api/registered-games", {
+      headers: { Authorization: "Bearer " + token }
+    }) 
+      .then(res => {
+        if (!res.ok) throw new Error("Rejected request");
+        return res.json();
+      })
+      .then((games: JoinableGame[]) => {
+        console.log(games);
+        setRegisteredGames(games);
       });
 
 
@@ -111,12 +125,20 @@ export default function Hub() {
     setSelectedJoinableGame(game);
   }
 
-  function handleCurrentGameClick(game: DB_Game) {
+  function handleOngoingGameClick(game: DB_Game) {
     setSelectedOngoingGame(game);
+  }
+
+  function handleRegisteredGameClick(game: DB_Game) {
+    setSelectedRegisteredGame(game);
   }
 
   function closeJoinableGameDetail() {
     setSelectedJoinableGame(null);
+  }
+
+  function closeRegisteredGameDetail() {
+    setSelectedRegisteredGame(null);
   }
 
   function closeOngoingGameDetail() {
@@ -124,7 +146,21 @@ export default function Hub() {
   }
 
   function handleJoinSuccess() {
+    if (!selectedJoinableGame) return;
     setJoinableGames(prev => prev.filter(g => g.game_id !== selectedJoinableGame?.game_id));
+    setRegisteredGames(prev => prev.concat([selectedJoinableGame]));
+  }
+
+  function handleLeaveSuccess() {
+    if (!selectedRegisteredGame) return;
+    setRegisteredGames(prev => prev.filter(g => g.game_id !== selectedRegisteredGame?.game_id));
+    setJoinableGames(prev => prev.concat([selectedRegisteredGame]));
+  }
+
+  function handleStartSuccess() {
+    if (!selectedRegisteredGame) return;
+    setRegisteredGames(prev => prev.filter(g => g.game_id !== selectedRegisteredGame?.game_id));
+    setOngoingGames(prev => prev.concat([selectedRegisteredGame]));
   }
 
   // Display on loading.
@@ -163,6 +199,14 @@ export default function Hub() {
           onJoinSuccess={handleJoinSuccess}
         />
       )}
+      { selectedRegisteredGame && (
+        <RegisteredGameDetailPopup
+          game={selectedRegisteredGame}
+          close={closeRegisteredGameDetail}
+          onLeaveSuccess={handleLeaveSuccess}
+          onStartSuccess={handleStartSuccess}
+        />
+      )}
       { selectedOngoingGame && (
         <OngoingGameDetailPopup
           game={selectedOngoingGame}
@@ -173,11 +217,19 @@ export default function Hub() {
       <div className="hubContent">
         <div className="hubColumn">
           <GameListBox 
-            gameList={currentGames} 
+            gameList={ongoingGames} 
             title="Ongoing Games"
-            onRowClick={handleCurrentGameClick}
+            onRowClick={handleOngoingGameClick}
           />
           <button className="hub-button light-button" onClick={() => setIsCreatePopupOpen(true)}>Create Game</button>
+        </div>
+
+        <div className="hubColumn">
+          <GameListBox 
+            gameList={registeredGames} 
+            title="Unstarted Games"
+            onRowClick={handleRegisteredGameClick}
+          />
         </div>
 
         <div className="hubColumn">

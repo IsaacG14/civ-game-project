@@ -178,7 +178,9 @@ def query_db(query_template: str, params: list[any] | dict[str, any] = []):
 
 
 @app.route("/api/joinable-games")
+@require_jwt
 def get_joinable_games():
+    user_id = request.user_id
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
@@ -189,16 +191,43 @@ def get_joinable_games():
             JOIN game_type as T on G.type_name = T.type_name
             LEFT JOIN plays as P on P.game_id = g.game_id
             WHERE U.is_public = 1
+              AND G.game_id NOT IN (
+                SELECT game_id FROM Plays WHERE user_id = %s
+              )
             GROUP BY G.game_id, G.type_name, G.name, G.creation_date, G.status, 
                 U.invite_code, U.is_public, T.max_players
             HAVING COUNT(P.user_id) < T.max_players;    
-            """)
+            """, (user_id,))
         results = cursor.fetchall()
         cursor.close()
         conn.close()
         return jsonify(results), 200
     except Exception as e:
         print("error at endpoint /api/joinable-games --", e)
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/registered-games")
+@require_jwt
+def get_registered_games():
+    user_id = request.user_id
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT G.game_id, G.type_name, G.name, G.creation_date, G.status, U.invite_code, U.is_public, COUNT(P.user_id) AS current_players
+            FROM game as G
+            JOIN unstarted_game as U on G.game_id = U.game_id
+            JOIN game_type as T on G.type_name = T.type_name
+            JOIN plays as P on P.game_id = G.game_id
+            WHERE P.user_id = %s AND G.status = 'Unstarted'
+            GROUP BY G.game_id, G.type_name, G.name, G.creation_date, G.status, U.invite_code, U.is_public
+            """, (user_id,))
+        results = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return jsonify(results), 200
+    except Exception as e:
+        print("error at endpoint /api/registered-games --", e)
         return jsonify({"error": str(e)}), 500
     
 @app.route("/api/current-games")
@@ -478,6 +507,128 @@ def join_game():
     except Exception as e:
         print("Error joining game:", e)
         return jsonify({"message": "Server error joining game", "error": str(e)}), 500
+
+    finally:
+        try:
+            cursor.close()
+            conn.close()
+        except:
+            pass
+
+@app.route("/api/leave-game", methods=["POST"])
+@require_jwt
+def leave_game():
+    user_id = request.user_id
+
+    data = request.get_json()
+    game_id = data.get("game_id")
+
+    if not game_id:
+        return jsonify({"message": "Game ID is required"}), 400
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Check if user is in the game
+        cursor.execute("""
+            SELECT 1
+            FROM Plays
+            WHERE user_id = %s AND game_id = %s;
+        """, (user_id, game_id))
+
+        if not cursor.fetchone():
+            return jsonify({"message": "You are not in this game"}), 404
+
+        # Delete the Plays record
+        cursor.execute("""
+            DELETE FROM Plays
+            WHERE user_id = %s AND game_id = %s;
+        """, (user_id, game_id))
+
+        conn.commit()
+
+        return jsonify({"message": "Successfully left game"}), 200
+
+    except Exception as e:
+        print("Error leaving game:", e)
+        return jsonify({"message": "Server error leaving game", "error": str(e)}), 500
+
+    finally:
+        try:
+            cursor.close()
+            conn.close()
+        except:
+            pass
+
+@app.route("/api/start-game", methods=["POST"])
+@require_jwt
+def start_game():
+    user_id = request.user_id
+
+    data = request.get_json()
+    game_id = data.get("game_id")
+
+    if not game_id:
+        return jsonify({"message": "Game ID is required"}), 400
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # Check if user is in the game
+        cursor.execute("""
+            SELECT 1
+            FROM Plays
+            WHERE user_id = %s AND game_id = %s;
+        """, (user_id, game_id))
+
+        if not cursor.fetchone():
+            return jsonify({"message": "You are not in this game"}), 403
+
+        # Get game details
+        cursor.execute("""
+            SELECT status, type_name
+            FROM Game
+            WHERE game_id = %s;
+        """, (game_id,))
+
+        game = cursor.fetchone()
+        if not game:
+            return jsonify({"message": "Game not found"}), 404
+
+        if game["status"] != "Unstarted":
+            return jsonify({"message": "Game has already started or finished"}), 400
+
+        # TODO: In the future, restrict this to only the user who created the game.
+        # For now, any registered player can start the game.
+
+        # Update game status to Ongoing
+        cursor.execute("""
+            UPDATE Game
+            SET status = 'Ongoing'
+            WHERE game_id = %s;
+        """, (game_id,))
+
+        # Create Ongoing_Game record
+        cursor.execute("""
+            INSERT INTO Ongoing_Game (game_id, public_info, state, location_url, turn_end_date)
+            VALUES (%s, NULL, NULL, NULL, NULL);
+        """, (game_id,))
+
+        # Delete Unstarted_Game record
+        cursor.execute("""
+            DELETE FROM Unstarted_Game
+            WHERE game_id = %s;
+        """, (game_id,))
+
+        conn.commit()
+
+        return jsonify({"message": "Game started successfully", "game_id": game_id}), 200
+
+    except Exception as e:
+        print("Error starting game:", e)
+        return jsonify({"message": "Server error starting game", "error": str(e)}), 500
 
     finally:
         try:
