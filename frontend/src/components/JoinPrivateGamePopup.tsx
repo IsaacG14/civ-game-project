@@ -7,6 +7,8 @@ type JoinPrivateGamePopupProps = {
   close: () => void;
 };
 
+type JoinGameResponse = { message: string; game_id: number };
+
 export default function JoinPrivateGamePopup(props: JoinPrivateGamePopupProps) {
   const [inviteCode, setInviteCode] = useState("");
   const [error, setError] = useState<string|null>(null);
@@ -28,11 +30,13 @@ export default function JoinPrivateGamePopup(props: JoinPrivateGamePopupProps) {
       });
 
       if (!res.ok) {
-        setError("Join game failed: " + (await res.json())?.message);
+        const errData: any = await res.json();
+        setError("Join game failed: " + errData?.message);
         return;
       }
 
-      console.log("Joined game:", await res.json());
+      const joinResp: JoinGameResponse = await res.json();
+      console.log("Joined game:", joinResp);
       props.close();
     } 
     catch (err) {

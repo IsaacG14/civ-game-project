@@ -10,6 +10,11 @@ import Navbar from "../components/Navbar";
 import CreateGamePopup from "../components/CreateGamePopup";
 import JoinPrivateGamePopup from "../components/JoinPrivateGamePopup";
 import GameListBox from "../components/GameListBox";
+import JoinableGameDetailPopup from "../components/JoinableGameDetailPopup";
+import OngoingGameDetailPopup from "../components/OngoingGameDetailPopup";
+import { DB_Game } from "../db-types";
+
+type JoinableGame = DB_Game & { invite_code?: string | null; is_public?: boolean; current_players?: number };
 
 export default function Hub() {
   const navigate = useNavigate();
@@ -17,14 +22,15 @@ export default function Hub() {
   // Display for loading screen when credentials are submitted. True for initial page load.
   const [loading, setLoading] = useState(true);
 
-  // Data from backend to be displayed on screen.
-  const [hubData, setHubData] = useState(null);
-
-  const [joinableGames, setJoinableGames] = useState([]);
-  const [currentGames, setCurrentGames] = useState([]);
+  const [joinableGames, setJoinableGames] = useState<JoinableGame[]>([]);
+  const [currentGames, setCurrentGames] = useState<DB_Game[]>([]);
 
   const [isCreatePopupOpen, setIsCreatePopupOpen] = useState(false);
   const [isJoinPopupOpen, setIsJoinPopupOpen] = useState(false);
+
+  const [selectedJoinableGame, setSelectedJoinableGame] = useState<JoinableGame | null>(null);
+  const [selectedOngoingGame, setSelectedOngoingGame] = useState<DB_Game | null>(null);
+  
 
 
   // When page loads, check for token validity. If invalid token send user to login page.
@@ -32,13 +38,13 @@ export default function Hub() {
     // Get token from local storage.
     const token = localStorage.getItem("token");
 
-    // If token does not exists send user to login.
+    // If token does not exist send user to login.
     if (!token) {
       navigate("/login");
       return;
     }
 
-    // If token does exists send to backend for validation.
+    // If token does exist send to backend for validation.
     fetch("http://localhost:5000/api/hub", {
       headers: {
         Authorization: "Bearer " + token,
@@ -49,9 +55,8 @@ export default function Hub() {
         if (!res.ok) throw new Error("Unauthorized");
         return res.json();
       })
-      // If response is valid, display data from backend and finish loading.
-      .then(data => {
-        setHubData(data);
+      // If response is valid, finish loading.
+      .then(_ => {
         setLoading(false);
       })
       // On error, display error, remove token from local storage, and send user to login.
@@ -69,7 +74,7 @@ export default function Hub() {
         return res.json();
       })
       // If there is a valid response navigate to hub.
-      .then(games => {
+      .then((games: JoinableGame[]) => {
         console.log(games);
         setJoinableGames(games);
       });
@@ -81,7 +86,7 @@ export default function Hub() {
         return res.json();
       })
       // If there is a valid response navigate to hub.
-      .then(games => {
+      .then((games: DB_Game[]) => {
         console.log(games);
         setCurrentGames(games);
       });
@@ -100,6 +105,26 @@ export default function Hub() {
   }
   function leaderboard() {
     navigate("/leaderboard");
+  }
+
+  function handleJoinableGameClick(game: JoinableGame) {
+    setSelectedJoinableGame(game);
+  }
+
+  function handleCurrentGameClick(game: DB_Game) {
+    setSelectedOngoingGame(game);
+  }
+
+  function closeJoinableGameDetail() {
+    setSelectedJoinableGame(null);
+  }
+
+  function closeOngoingGameDetail() {
+    setSelectedOngoingGame(null);
+  }
+
+  function handleJoinSuccess() {
+    setJoinableGames(prev => prev.filter(g => g.game_id !== selectedJoinableGame?.game_id));
   }
 
   // Display on loading.
@@ -131,15 +156,36 @@ export default function Hub() {
 
       { isJoinPopupOpen && <JoinPrivateGamePopup close={() => setIsJoinPopupOpen(false)}/> }
       { isCreatePopupOpen && <CreateGamePopup close={() => setIsCreatePopupOpen(false)}/> }
+      { selectedJoinableGame && (
+        <JoinableGameDetailPopup
+          game={selectedJoinableGame}
+          close={closeJoinableGameDetail}
+          onJoinSuccess={handleJoinSuccess}
+        />
+      )}
+      { selectedOngoingGame && (
+        <OngoingGameDetailPopup
+          game={selectedOngoingGame}
+          close={closeOngoingGameDetail}
+        />
+      )}
       
-      <div className = "hubContent">
-        <div className = "hubColumn">
-          <GameListBox gameList={currentGames} title="Ongoing Games"/>
+      <div className="hubContent">
+        <div className="hubColumn">
+          <GameListBox 
+            gameList={currentGames} 
+            title="Ongoing Games"
+            onRowClick={handleCurrentGameClick}
+          />
           <button className="hub-button light-button" onClick={() => setIsCreatePopupOpen(true)}>Create Game</button>
         </div>
 
-        <div className = "hubColumn">
-          <GameListBox gameList={joinableGames} title="Joinable Games" />
+        <div className="hubColumn">
+          <GameListBox 
+            gameList={joinableGames} 
+            title="Joinable Games"
+            onRowClick={handleJoinableGameClick}
+          />
           <button className="hub-button light-button" onClick={() => setIsJoinPopupOpen(true)}>Join Private Game</button>
         </div>
       </div> 

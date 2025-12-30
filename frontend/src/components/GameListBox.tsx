@@ -1,15 +1,9 @@
-import React from "react";
-
-type Game = {
-    game_id: number;
-    name: string;
-    type_name: string;
-    creation_date: string;
-}
+import { DB_Game } from "../db-types";
 
 type GameListBoxProps = {
-    gameList: Game[];
+    gameList: DB_Game[];
     title?: string;
+    onRowClick?: (game: DB_Game) => void;
 }
 
 export default function GameListBox(props: GameListBoxProps) {
@@ -22,6 +16,7 @@ export default function GameListBox(props: GameListBoxProps) {
         border: "1px solid var(--primary-light)",
         marginBottom: "12px",
         padding: "6px",
+        cursor: "pointer",
     };
 
     const fieldStyle = {
@@ -31,9 +26,14 @@ export default function GameListBox(props: GameListBoxProps) {
         textOverflow: "ellipsis",
     };
     
-    function formatItem(item: Game) {
+    function formatItem(item: DB_Game) {
         return (
-            <div key={item.game_id} className="dark-button" style={itemStyle}>
+            <div 
+                key={item.game_id} 
+                className="dark-button" 
+                style={itemStyle}
+                onClick={() => props.onRowClick?.(item)}
+            >
                 <div style={fieldStyle}>{item.name}</div>
                 <div style={fieldStyle}><small>({item.type_name})</small></div>
             </div>

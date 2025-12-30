@@ -29,3 +29,6 @@ yarn-error.log*
 .idea/
 *.log
 .DS_Store
+
+# Local AI agent instructions
+.github/copilot-instructions.md

@@ -2,19 +2,16 @@ import { useEffect, useState } from "react";
 import Popup from "./Popup";
 import TextInput from "./TextInput";
 import ErrorBox from "./ErrorBox";
+import { DB_Game_Type } from "../db-types";
 
 type CreateGamePopupProps = {
   close: () => void;
 };
 
-type GameTypeInfo = {
-  type_name: string;
-  min_players: number;
-  max_players: number;
-};
+type CreateGameResponse = { message: string; game_id: number; invite_code: string };
 
 export default function CreateGamePopup(props: CreateGamePopupProps) {
-  const [gameTypes, setGameTypes] = useState<GameTypeInfo[]>([]);
+  const [gameTypes, setGameTypes] = useState<DB_Game_Type[]>([]);
   const [selectedGame, setSelectedGame] = useState<string>("");
   const [playerCount, setPlayerCount] = useState<number>(1);
   const [gameName, setGameName] = useState("");
@@ -36,7 +33,7 @@ export default function CreateGamePopup(props: CreateGamePopupProps) {
           setError("Failed to fetch game types: " + (await res.json())?.message);
           return;
         }
-        const data: GameTypeInfo[] = await res.json();
+        const data: DB_Game_Type[] = await res.json();
         setGameTypes(data);
         if (data.length > 0) {
           setSelectedGame(data[0].type_name);
@@ -74,11 +71,13 @@ export default function CreateGamePopup(props: CreateGamePopupProps) {
       });
 
       if (!res.ok) {
-        setError("Create game failed: " + (await res.json())?.message);
+        const errData: any = await res.json();
+        setError("Create game failed: " + errData?.message);
         return;
       }
 
-      console.log("Game created:", await res.json());
+      const createResp: CreateGameResponse = await res.json();
+      console.log("Game created:", createResp);
       props.close();
     } catch (err) {
       setError("Error creating game: " + err);
